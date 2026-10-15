@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>Test – Đấu Trường Sinh Tồn (core)</title>
+<style>
+  body{font:14px/1.5 system-ui,sans-serif;background:#10131a;color:#e8eaf0;padding:20px;max-width:760px;margin:auto}
+  h1{font-size:18px} .ok{color:#6fdc8c} .fail{color:#ff6b6b;font-weight:bold}
+  li{list-style:none;padding:2px 0} #sum{margin:12px 0;font-size:16px;font-weight:bold}
+</style>
+</head>
+<body>
+<h1>Test core: EventBus · utils · gameState · wsClient</h1>
+<div id="sum">Đang chạy…</div>
+<ul id="out"></ul>
+<p>Mở qua HTTP (VD <code>http://localhost:3000/test.html</code>) vì ES modules không chạy được với file://.</p>
+<script type="module">
+import config from './core/config.js';
+import { createEventBus } from './core/eventBus.js';
+import { normalizeText, clamp, lerp, dist, createRng, getGiftTier, uid } from './core/utils.js';
+import { createState, resetRound, getAlive, getPlayerByName } from './core/gameState.js';
+import { createWsClient } from './net/wsClient.js';
+
+const out = document.getElementById('out');
+let pass = 0, fail = 0;
+function check(name, cond) {
+  cond ? pass++ : fail++;
+  const li = document.createElement('li');
+  li.className = cond ? 'ok' : 'fail';
+  li.textContent = `${cond ? '✔' : '✘'} ${name}`;
+  out.appendChild(li);
+}
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
+// ---- EventBus ----
+{
+  const bus = createEventBus(config);
+  const got = [];
+  const un = bus.on('a', (p) => got.push(p));
+  bus.emit('a', 1);
+  un(); bus.emit('a', 2);
+  check('EventBus: on + emit + unsubscribe', got.length === 1 && got[0] === 1);
+
+  let n = 0;
+  bus.once('b', () => n++);
+  bus.emit('b'); bus.emit('b');
+  check('EventBus: once chỉ chạy 1 lần', n === 1);
+
+  const f = () => n++;
+  bus.on('c', f); bus.off('c', f); bus.emit('c');
+  check('EventBus: off gỡ listener', n === 1);
+
+  const origErr = console.error; let errLogged = 0; console.error = () => errLogged++;
+  let second = false;
+  bus.on('d', () => { throw new Error('boom'); });
+  bus.on('d', () => { second = true; });
+  bus.emit('d');
+  console.error = origErr;
+  check('EventBus: lỗi listener không chặn listener khác (và được console.error)', second && errLogged === 1);
+
+  const origLog = console.log; let logged = 0; console.log = () => logged++;
+  const dbgBus = createEventBus({ debug: true }); dbgBus.emit('x', {});
+  console.log = origLog;
+  check('EventBus: debug mode log mọi event', logged === 1);
+}
+
+// ---- utils ----
+check('normalizeText("ĐÁNH") === normalizeText("danh")', normalizeText('ĐÁNH') === normalizeText('danh'));
+check('normalizeText bỏ dấu + trim + gộp khoảng trắng', normalizeText('  Hợp   TÁC ') === 'hop tac');
+check('clamp / lerp / dist', clamp(5, 0, 3) === 3 && lerp(0, 10, 0.5) === 5 && dist({x:0,y:0},{x:3,y:4}) === 5);
+{
+  const a = createRng(42), b = createRng(42);
+  check('Seeded RNG tái lập được', a.next() === b.next() && a.int(1, 100) === b.int(1, 100));
+  check('uid không trùng', uid('t') !== uid('t'));
+  check('getGiftTier: 5→1, 50→2, 250→3, 999→4', [5, 50, 250, 999].map((d) => getGiftTier(config.gifts.tiers, d).tier).join() === '1,2,3,4');
+}
+
+// ---- gameState ----
+{
+  const state = createState(config);
+  const mk = (id, name, extra = {}) => ({ id, name, avatar: '', isBot: id.startsWith('bot_'), status: 'alive', maxHp: 100, hp: 100, ...extra });
+  state.players.set('1', mk('1', 'Đức Huy'));
+  state.players.set('2', mk('2', 'Ngọc Lan', { status: 'dead' }));
+  state.players.set('bot_1', mk('bot_1', 'Bot Minh'));
+  check('createState: đúng cấu trúc', state.arena.cx === config.arena.w / 2 && state.players instanceof Map && state.energy.max === config.events.energy.max);
+  check('getAlive chỉ trả người còn sống', getAlive(state).length === 2);
+  check('getPlayerByName("duc huy") bỏ dấu', getPlayerByName(state, 'duc huy')?.id === '1');
+  check('getPlayerByName("NGỌC LAN") không phân biệt hoa/thường', getPlayerByName(state, 'NGỌC LAN')?.id === '2');
+  check('getPlayerByName("huy") khớp một phần', getPlayerByName(state, 'huy')?.id === '1');
+  check('getPlayerByName không tồn tại -> null', getPlayerByName(state, 'khong co') === null);
+  state.drops.push({ id: 'd1' }); state.energy.value = 50; state.bountyId = '1';
+  resetRound(state, { keepPlayers: true });
+  check('resetRound(keepPlayers): xóa bot, giữ người, reset energy/drops/bounty',
+    !state.players.has('bot_1') && state.players.has('1') && state.drops.length === 0 && state.energy.value === 0 && state.bountyId === null && state.players.get('2').status === 'alive');
+  resetRound(state);
+  check('resetRound(): xóa toàn bộ người chơi', state.players.size === 0);
+}
+
+// ---- wsClient (chế độ local) ----
+{
+  const bus = createEventBus(config);
+  const seen = { status: [], join: 0, chat: 0 };
+  bus.on('live:status', (s) => seen.status.push(s));
+  bus.on('live:join', () => seen.join++);
+  bus.on('live:chat', () => seen.chat++);
+  const client = createWsClient({ bus, config, local: true });
+  client.connect();
+  check('wsClient local: phát live:status connected ngay', seen.status[0]?.connected === true && seen.status[0]?.roomId === 'local');
+  await sleep(config.net.local.joinIntervalMs * 2 + 100);
+  check('wsClient local: sinh live:join + live:chat', seen.join >= 1 && seen.chat >= 1);
+  client.dispose();
+  const before = seen.chat;
+  await sleep(config.net.local.eventIntervalMs * 2);
+  check('wsClient: dispose dừng sạch timer', seen.chat === before);
+}
+
+// ---- wsClient (reconnect với server không tồn tại) ----
+{
+  const bus = createEventBus(config);
+  const statuses = [];
+  bus.on('live:status', (s) => statuses.push(s));
+  const client = createWsClient({ bus, config, url: 'ws://127.0.0.1:1/ws', local: false });
+  client.connect();
+  await sleep(600);
+  client.dispose();
+  check('wsClient: mất/không có kết nối -> live:status {connected:false,error}', statuses.length >= 1 && statuses[0].connected === false && !!statuses[0].error);
+}
+
+document.getElementById('sum').textContent = `Kết quả: ${pass} đạt, ${fail} lỗi`;
+document.getElementById('sum').className = fail ? 'fail' : 'ok';
+</script>
+</body>
+</html>

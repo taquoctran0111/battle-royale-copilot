@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>Trang test sự kiện LIVE</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  body{font:13px/1.4 ui-monospace,Consolas,monospace;margin:0;background:#12141a;color:#dde}
+  header{position:sticky;top:0;background:#1b1e27;padding:8px 12px;border-bottom:1px solid #333;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+  button,select{background:#2a2f3d;color:#dde;border:1px solid #445;border-radius:4px;padding:3px 8px;cursor:pointer}
+  #st{font-weight:bold}.ok{color:#5ddc7a}.bad{color:#ff6b6b}
+  #counts span{margin-right:10px;color:#9ab}
+  #log{padding:8px 12px}
+  .row{white-space:pre-wrap;word-break:break-all;border-bottom:1px solid #222;padding:1px 0}
+  .t{color:#7cc4ff}
+</style>
+</head>
+<body>
+<header>
+  <span id="st" class="bad">WS: chưa kết nối</span>
+  <span id="live">live: ?</span>
+  <span id="counts"></span>
+  <a id="game-link" target="_blank" rel="noopener">Mở game</a>
+  <select id="sender" aria-label="Người gửi"><option value="">Ngẫu nhiên</option></select>
+  <span id="send-status" role="status"></span>
+  <button data-send='{"type":"live:chat","text":"ĐÁNH"}'>Chat ĐÁNH</button>
+  <button data-send='{"type":"live:chat","text":"PHẢN BỘI"}'>Chat PHẢN BỘI</button>
+  <button data-send='{"type":"live:gift","giftName":"Rose","diamonds":1,"count":1}'>Quà T1</button>
+  <button data-send='{"type":"live:gift","giftName":"Corgi","diamonds":99,"count":1}'>Quà T2</button>
+  <button data-send='{"type":"live:gift","giftName":"Money Gun","diamonds":449,"count":1}'>Quà T3</button>
+  <button data-send='{"type":"live:gift","giftName":"Galaxy","diamonds":1000,"count":1}'>Quà T4</button>
+  <select id="inten"><option>low</option><option selected>medium</option><option>high</option></select>
+  <button id="pause">Tạm dừng log</button>
+</header>
+<div id="log"></div>
+<script type="module">
+// Trường bắt buộc theo catalog -> kiểm tra schema ngay trên trang
+const SCHEMA = {
+  'live:status': { connected: 'boolean' },
+  'live:chat':   { userId:'string', uniqueId:'string', nickname:'string', avatarUrl:'string', text:'string' },
+  'live:gift':   { userId:'string', uniqueId:'string', nickname:'string', avatarUrl:'string', giftId:'number', giftName:'string', diamonds:'number', count:'number' },
+  'live:like':   { userId:'string', nickname:'string', likeCount:'number', totalLikeCount:'number' },
+  'live:join':   { userId:'string', uniqueId:'string', nickname:'string', avatarUrl:'string' },
+  'live:follow': { userId:'string', uniqueId:'string', nickname:'string' },
+  'live:share':  { userId:'string', uniqueId:'string', nickname:'string' },
+};
+const $ = (s) => document.querySelector(s);
+const counts = {}; let paused = false;
+const users = new Map();
+const configuredServer = new URLSearchParams(location.search).get('server');
+const BACKEND_ORIGIN = new URL(
+  configuredServer || (location.pathname === '/mock.html' || location.port === '3000' ? location.origin : `${location.protocol}//${location.hostname}:3000`),
+  location.href,
+).origin;
+const backendUrl = new URL(BACKEND_ORIGIN);
+const WS_URL = `${backendUrl.protocol === 'https:' ? 'wss:' : 'ws:'}//${backendUrl.host}`;
+$('#game-link').href = BACKEND_ORIGIN;
+
+function validate(type, p) {
+  const sc = SCHEMA[type];
+  if (!sc) return `type lạ: ${type}`;
+  const bad = Object.entries(sc).filter(([k, t]) => typeof p?.[k] !== t).map(([k]) => k);
+  return bad.length ? 'thiếu/sai: ' + bad.join(',') : '';
+}
+function logEvent(type, payload) {
+  if (payload?.userId && !users.has(payload.userId)) {
+    users.set(payload.userId, payload);
+    const option = document.createElement('option');
+    option.value = payload.userId;
+    option.textContent = `${payload.nickname || payload.userId} (${payload.userId})`;
+    $('#sender').appendChild(option);
+  }
+  counts[type] = (counts[type] || 0) + 1;
+  $('#counts').innerHTML = Object.entries(counts).map(([k, v]) => `<span>${k.replace('live:','')}:${v}</span>`).join('');
+  if (paused) return;
+  const err = validate(type, payload);
+  const short = { ...payload }; if (short.avatarUrl) short.avatarUrl = '…';
+  const row = document.createElement('div');
+  row.className = 'row';
+  row.innerHTML = `<span class="${err ? 'bad' : 'ok'}">${err ? '✗' : '✓'}</span> <span class="t"></span> <span class="p"></span>` + (err ? ` <span class="bad"></span>` : '');
+  row.querySelector('.t').textContent = type;
+  row.querySelector('.p').textContent = JSON.stringify(short);
+  if (err) row.lastElementChild.textContent = err;
+  const log = $('#log'); log.prepend(row);
+  while (log.childElementCount > 300) log.lastElementChild.remove();
+}
+
+function connect() {
+  const ws = new WebSocket(WS_URL);
+  ws.onopen = () => { $('#st').textContent = 'WS: đã kết nối'; $('#st').className = 'ok'; };
+  ws.onclose = () => { $('#st').textContent = 'WS: mất kết nối, thử lại…'; $('#st').className = 'bad'; setTimeout(connect, 2000); };
+  ws.onmessage = (e) => {
+    try {
+      const { type, payload } = JSON.parse(e.data);
+      if (type === 'live:status') $('#live').textContent = 'live: ' + JSON.stringify(payload);
+      logEvent(type, payload);
+    } catch (err) { console.error(err); }
+  };
+}
+connect();
+
+async function post(url, body) {
+  const status = $('#send-status');
+  try {
+    const response = await fetch(`${BACKEND_ORIGIN}${url}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+    const result = await response.json();
+    if (!response.ok || !result.ok) throw new Error(result.error || `HTTP ${response.status}`);
+    status.className = 'ok';
+    status.textContent = result.sent ? `Đã gửi: ${result.sent.payload.nickname} (${result.sent.payload.userId})` : 'Đã đổi cường độ';
+  } catch (error) {
+    status.className = 'bad';
+    status.textContent = `Không gửi được: ${error.message}`;
+  }
+}
+document.querySelectorAll('[data-send]').forEach((button) => button.onclick = () => {
+  const event = JSON.parse(button.dataset.send);
+  const sender = users.get($('#sender').value);
+  if (sender) Object.assign(event, { userId: sender.userId, uniqueId: sender.uniqueId, nickname: sender.nickname, avatarUrl: sender.avatarUrl });
+  return post('/mock/send', event);
+});
+$('#inten').onchange = (event) => post('/mock/intensity', { intensity: event.target.value });
+$('#pause').onclick = (e) => { paused = !paused; e.target.textContent = paused ? 'Tiếp tục log' : 'Tạm dừng log'; };
+</script>
+</body>
+</html>

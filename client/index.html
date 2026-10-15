@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <title>Đấu Trường Sinh Tồn</title>
+  <style>
+    :root { color-scheme: dark; font-family: "Trebuchet MS", "Segoe UI", sans-serif; background: #10171c; color: #e4eee7; }
+    * { box-sizing: border-box; }
+    html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; }
+    body { background: radial-gradient(ellipse at 50% 42%, #253238 0, #131b20 48%, #0b1014 100%); }
+    #arena { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
+    [hidden] { display: none !important; }
+    #hud { position: absolute; transform-origin: top left; display: grid; grid-template-rows: auto auto minmax(0,1fr); gap: 24px; padding: var(--safe-top,115px) var(--safe-right,150px) var(--safe-bottom,288px) var(--safe-left,65px); pointer-events: none; overflow: hidden; }
+    #hud::before { content: ''; position: absolute; inset: 0; z-index: -1; background: linear-gradient(180deg,rgba(8,16,18,.82),transparent 36%,transparent 65%,rgba(8,16,18,.9)); }
+    #hud[data-phase="LOBBY"]::before, #hud[data-phase="RESULT"]::before { background: rgba(9,18,20,.87); }
+    #hud[data-phase="RESULT"]::before { background: rgba(9,18,20,.98); }
+    .topline { display: flex; align-items: start; justify-content: space-between; gap: 28px; min-height: 112px; padding: 14px 16px; background: rgba(10,24,25,.98); }
+    .brand { font-size: 35px; font-weight: 800; letter-spacing: 0; color: #f0f5ee; line-height: 1.1; }
+    .status { display: grid; justify-items: end; gap: 10px; text-align: right; min-width: 0; }
+    .phase-time { display: flex; flex-wrap: wrap; justify-content: end; align-items: baseline; gap: 14px; }
+    #phase-label { font-size: 32px; font-weight: 800; color: #f0c36a; }
+    #phase-clock { font-size: 42px; font-weight: 800; font-variant-numeric: tabular-nums; }
+    #connection-label { font-size: 22px; color: #a6b6b3; max-width: 330px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    #connection-label[data-state="online"] { color: #8de0a3; }
+    #connection-label[data-state="offline"] { color: #ff927f; }
+    .audio-controls { display: flex; align-items: center; gap: 16px; pointer-events: auto; }
+    #audio-toggle { width: 56px; height: 56px; border: 1px solid #71877d; border-radius: 4px; background: #142326; color: #e4eee7; cursor: pointer; font-size: 28px; }
+    #audio-volume { width: 120px; accent-color: #8de0a3; }
+    .alert-stack { display: grid; gap: 14px; align-content: start; background: rgba(10,24,25,.98); }
+    #notice { display: flex; gap: 16px; align-items: center; padding: 16px 20px; min-height: 144px; max-height: 144px; border-left: 5px solid #f0c36a; background: rgba(15,26,27,.95); color: #fff0ba; overflow: hidden; }
+    .gift-mark { font-size: 40px; flex: 0 0 48px; text-align: center; }
+    .gift-copy { min-width: 0; }
+    #gift-thanks { font-size: 30px; font-weight: 800; line-height: 1.25; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; overflow-wrap: anywhere; }
+    #gift-detail { font-size: 21px; color: #aabeb8; }
+    #event-label, #zone-warning { font-size: 28px; color: #ff957d; font-weight: 800; padding: 10px 16px; background: rgba(68,22,27,.85); overflow-wrap: anywhere; }
+    #bounty-banner { font-size: 30px; color: #ffd166; padding: 12px 16px; border-left: 5px solid #f06a63; background: rgba(58,24,27,.9); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    #boss-panel { color: #ffb7ae; font-size: 24px; }
+    .meter-label { display: flex; justify-content: space-between; gap: 14px; font-size: 23px; }
+    progress { display: block; width: 100%; height: 15px; margin-top: 8px; accent-color: #76d0b0; }
+    #boss-meter { accent-color: #ed746a; }
+    .phase-screen { min-height: 0; min-width: 0; }
+    #lobby-screen { display: flex; flex-direction: column; justify-content: center; gap: 38px; }
+    .lobby-title { margin: 0; font-size: 62px; line-height: 1.1; font-weight: 800; }
+    .lobby-title strong { display: block; color: #f0c36a; font-size: 108px; margin: 8px 0; }
+    .lobby-metrics { display: flex; gap: 28px; font-size: 28px; color: #aec5bd; }
+    .lobby-metrics strong { color: #f3f5ed; font-size: 44px; font-variant-numeric: tabular-nums; }
+    .avatar-window { overflow: hidden; height: 118px; }
+    #recent-viewers { display: flex; gap: 22px; width: max-content; animation: viewer-ticker 18s linear infinite alternate; }
+    #recent-viewers li { display: grid; justify-items: center; gap: 8px; width: 100px; flex: 0 0 100px; font-size: 20px; }
+    #recent-viewers li>span:last-child { width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: center; }
+    .hud-avatar { position: relative; display: inline-grid; place-items: center; width: 62px; height: 62px; flex: 0 0 62px; border-radius: 50%; background: #315b50; color: #e5f1df; font-weight: 800; font-size: 28px; overflow: hidden; }
+    .hud-avatar img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+    .guide-band { border-top: 1px solid #50675e; padding-top: 22px; }
+    .guide-band h2, .battle-footer h2, .ranking-block h2 { margin: 0 0 18px; font-size: 26px; color: #a9c8b8; letter-spacing: 0; }
+    ul,ol { margin: 0; padding: 0; list-style: none; }
+    #command-guide { display: grid; grid-template-columns: 1fr 1fr; gap: 16px 24px; font-size: 26px; }
+    #command-guide li { display: flex; gap: 14px; }
+    #command-guide li>span { color: #f0c36a; width: 34px; }
+    #gift-guide { display: grid; gap: 14px; font-size: 24px; }
+    #gift-guide li { display: grid; grid-template-columns: 34px 150px 1fr; gap: 14px; align-items: center; }
+    #gift-guide li>span:first-child { color: #f0c36a; }
+    #countdown-screen { position: absolute; inset: var(--safe-top) var(--safe-right) var(--safe-bottom) var(--safe-left); display: grid; align-content: center; justify-items: center; text-align: center; z-index: 3; text-shadow: 0 4px 30px #0b1113; }
+    #countdown-number { font-size: 180px; color: #ffd166; font-weight: 900; line-height: 1; }
+    .countdown-caption { font-size: 32px; margin-top: 24px; }
+    #battle-screen { display: flex; flex-direction: column; justify-content: space-between; gap: 24px; }
+    .battle-stats { display: grid; gap: 16px; padding: 14px 18px; background: rgba(10,24,25,.98); }
+    #counts-label { font-size: 32px; font-weight: 800; color: #e5efdc; }
+    .battle-footer { display: grid; grid-template-columns: minmax(0,.46fr) minmax(0,.54fr); gap: 28px; background: rgba(8,17,19,.98); padding: 24px 16px; }
+    .battle-footer>section { min-width: 0; }
+    #kill-feed { display: grid; gap: 12px; min-height: 210px; font-size: 24px; line-height: 1.25; }
+    #kill-feed li { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .feed-betray,.feed-kill { color: #ffc2a8; } .feed-revive,.feed-ally { color: #9eddb7; } .feed-bounty { color: #ffd166; }
+    #damage-ranking li,.ranking-list li { display: grid; grid-template-columns: 32px minmax(0,1fr) auto; align-items: center; gap: 12px; min-height: 42px; font-size: 23px; }
+    #damage-ranking li { grid-template-columns: 22px minmax(0,1fr); gap: 4px 10px; }
+    #damage-ranking .rank-score { grid-column: 2; font-size: 20px; }
+    .rank-place { color: #f0c36a; font-variant-numeric: tabular-nums; }
+    .rank-score { color: #a6bfb3; white-space: nowrap; font-size: 22px; }
+    .ranking-list strong,#damage-ranking strong { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+    #result-screen { display: grid; align-content: start; gap: 28px; overflow: hidden; }
+    .champion { display: grid; justify-items: center; text-align: center; gap: 14px; padding: 18px 0; }
+    .champion>p { margin: 0; font-size: 28px; font-weight: 800; color: #f0c36a; }
+    .avatar-champion { width: 160px; height: 160px; font-size: 70px; border: 4px solid #f0c36a; }
+    #champion-name { margin: 0; font-size: 54px; line-height: 1.1; max-width: 100%; overflow-wrap: anywhere; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .champion-stats { display: flex; justify-content: center; flex-wrap: wrap; gap: 28px; font-size: 25px; color: #b1c9bc; }
+    .champion-stats strong { color: #f3f2db; }
+    .ranking-block { border-top: 1px solid #435c52; padding-top: 18px; min-height: 0; }
+    #round-ranking { max-height: 286px; overflow-y: auto; pointer-events: auto; scrollbar-width: thin; }
+    #daily-status { font-size: 24px; color: #a6bfb3; }
+    @keyframes viewer-ticker { from { transform: translateX(0); } to { transform: translateX(-35%); } }
+    @media (prefers-reduced-motion: reduce) { #recent-viewers { animation: none; } }
+    .transparent, .transparent body { background: transparent !important; }
+    .transparent #arena { background: transparent; }
+    .transparent #hud::before { background: transparent; }
+  </style>
+</head>
+<body>
+  <canvas id="arena" width="1080" height="1920" aria-label="Đấu trường sinh tồn"></canvas>
+  <main id="hud" data-phase="LOBBY">
+    <header class="topline">
+      <div class="brand">ĐẤU TRƯỜNG<br>SINH TỒN</div>
+      <div class="status">
+        <div class="phase-time"><span id="phase-label">SẢNH CHỜ</span><span id="phase-clock">0:45</span></div>
+        <div id="connection-label" data-state="offline">ĐANG KẾT NỐI</div>
+        <div class="audio-controls"><button id="audio-toggle" type="button" aria-pressed="false" aria-label="Bật âm thanh" title="Bật âm thanh">&#128263;</button><input id="audio-volume" type="range" min="0" max="1" step="0.01" aria-label="Âm lượng" title="Âm lượng"></div>
+      </div>
+    </header>
+    <div class="alert-stack">
+      <div id="zone-warning" hidden></div><div id="event-label" hidden></div><div id="bounty-banner" hidden></div>
+      <div id="boss-panel" hidden><div class="meter-label"><strong>BOSS</strong><span id="boss-hp"></span></div><progress id="boss-meter" value="0" max="100" aria-label="Máu boss"></progress></div>
+      <div id="notice" role="status" aria-live="polite" hidden><span class="gift-mark">&#10022;</span><div class="gift-copy"><div id="gift-thanks"></div><div id="gift-detail"></div></div></div>
+    </div>
+    <section id="lobby-screen" class="phase-screen">
+      <h1 class="lobby-title">Comment <strong>'JOIN'</strong> để vào đấu trường!</h1>
+      <div class="lobby-metrics"><span><strong id="lobby-count">0</strong> đã vào</span><span><strong id="lobby-clock">45</strong>s bắt đầu</span></div>
+      <div class="avatar-window"><ul id="recent-viewers"></ul></div>
+      <section class="guide-band"><h2>LỆNH NHANH</h2><ul id="command-guide"></ul></section>
+      <section class="guide-band"><h2>QUÀ HỖ TRỢ</h2><ul id="gift-guide"></ul></section>
+    </section>
+    <section id="countdown-screen" class="phase-screen" hidden><div id="countdown-number">5</div><div class="countdown-caption">ĐẤU TRƯỜNG SẴN SÀNG</div></section>
+    <section id="battle-screen" class="phase-screen" hidden>
+      <div class="battle-stats"><div id="counts-label">0 còn sống</div><div id="energy-panel"><div class="meter-label"><span>&#9829; NĂNG LƯỢNG</span><span id="energy-value">0/100</span></div><progress id="energy-meter" value="0" max="100" aria-label="Năng lượng sự kiện"></progress></div></div>
+      <footer class="battle-footer"><section><h2>TOP SÁT THƯƠNG</h2><ol id="damage-ranking"></ol></section><section><h2>DIỄN BIẾN</h2><ol id="kill-feed" aria-live="polite"></ol></section></footer>
+    </section>
+    <section id="result-screen" class="phase-screen" hidden>
+      <div class="champion"><p id="champion-heading">NHÀ VÔ ĐỊCH</p><div id="champion-avatar"></div><h1 id="champion-name">Hòa trận</h1><div class="champion-stats"><span><strong id="champion-kills">0</strong> hạ gục</span><span><strong id="champion-damage">0</strong> sát thương</span></div></div>
+      <section class="ranking-block"><h2>XẾP HẠNG VÁN · <span id="round-total">0</span> NGƯỜI</h2><ol id="round-ranking" class="ranking-list"></ol></section>
+      <section class="ranking-block"><h2>BẢNG NGÀY</h2><ol id="daily-ranking" class="ranking-list"></ol><div id="daily-status">Đang tải bảng ngày…</div></section>
+    </section>
+  </main>
+  <script type="module" src="./main.js"></script>
+</body>
+</html>
