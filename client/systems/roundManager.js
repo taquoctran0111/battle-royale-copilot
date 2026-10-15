@@ -205,12 +205,14 @@ export function createRoundManager({ bus, state, config, rng = Math.random }) {
         }
         return;
       }
-      if (aliveCount <= 1 || battleElapsed >= battleDuration) finishRound();
+      if (aliveCount === 1) bus.emit('boss:request', {});
+      if (aliveCount === 0 || (aliveCount === 1 && !state.boss) || battleElapsed >= battleDuration) finishRound();
       else if (aliveCount <= config.phases.finalThresholdAlive || phaseElapsed >= durations.BATTLE) setPhase('FINAL');
       return;
     }
     if (state.phase === 'FINAL') {
-      if (aliveCount <= 1 || battleElapsed >= battleDuration) finishRound();
+      if (aliveCount === 1) bus.emit('boss:request', {});
+      if (aliveCount === 0 || (aliveCount === 1 && !state.boss) || battleElapsed >= battleDuration) finishRound();
       return;
     }
     if (state.phase === 'RESULT' && phaseElapsed >= durations.RESULT) {

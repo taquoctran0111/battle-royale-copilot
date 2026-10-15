@@ -6,33 +6,33 @@
       "name": "Trần Hùng",
       "avatar": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64'><rect width='64' height='64' rx='32' fill='hsl(141,60%25,50%25)'/><text x='32' y='42' font-size='30' text-anchor='middle' fill='white' font-family='sans-serif'>H</text></svg>",
       "wins": 1,
-      "kills": 25,
-      "damage": 9778.659999999998,
-      "giftValue": 4403,
-      "rounds": 65,
-      "lastSeen": "2026-10-15T09:06:48.277Z"
+      "kills": 29,
+      "damage": 11050.239999999998,
+      "giftValue": 39717,
+      "rounds": 69,
+      "lastSeen": "2026-10-15T09:42:32.334Z"
     },
     "7000000000027": {
       "userId": "7000000000027",
       "name": "Đặng Khoa",
       "avatar": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64'><rect width='64' height='64' rx='32' fill='hsl(189,60%25,50%25)'/><text x='32' y='42' font-size='30' text-anchor='middle' fill='white' font-family='sans-serif'>K</text></svg>",
       "wins": 2,
-      "kills": 82,
-      "damage": 12760.500000000004,
-      "giftValue": 8168,
-      "rounds": 64,
-      "lastSeen": "2026-10-15T09:06:48.277Z"
+      "kills": 85,
+      "damage": 13596.500000000004,
+      "giftValue": 8191,
+      "rounds": 67,
+      "lastSeen": "2026-10-15T09:42:32.334Z"
     },
     "7000000000002": {
       "userId": "7000000000002",
       "name": "Phạm Thảo",
       "avatar": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64'><rect width='64' height='64' rx='32' fill='hsl(94,60%25,50%25)'/><text x='32' y='42' font-size='30' text-anchor='middle' fill='white' font-family='sans-serif'>T</text></svg>",
       "wins": 1,
-      "kills": 52,
-      "damage": 12118.16,
-      "giftValue": 7212,
-      "rounds": 61,
-      "lastSeen": "2026-10-15T09:06:48.277Z"
+      "kills": 57,
+      "damage": 14032.960000000001,
+      "giftValue": 7217,
+      "rounds": 65,
+      "lastSeen": "2026-10-15T09:42:32.334Z"
     },
     "7000000000050": {
       "userId": "7000000000050",
@@ -61,55 +61,55 @@
       "name": "Bùi Lan",
       "avatar": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64'><rect width='64' height='64' rx='32' fill='hsl(126,60%25,50%25)'/><text x='32' y='42' font-size='30' text-anchor='middle' fill='white' font-family='sans-serif'>L</text></svg>",
       "wins": 1,
-      "kills": 38,
-      "damage": 8684.42,
-      "giftValue": 74710,
-      "rounds": 58,
-      "lastSeen": "2026-10-15T09:06:48.277Z"
+      "kills": 39,
+      "damage": 9265.92,
+      "giftValue": 74809,
+      "rounds": 62,
+      "lastSeen": "2026-10-15T09:42:32.334Z"
     },
     "7000000000019": {
       "userId": "7000000000019",
       "name": "Vũ Linh",
       "avatar": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64'><rect width='64' height='64' rx='32' fill='hsl(173,60%25,50%25)'/><text x='32' y='42' font-size='30' text-anchor='middle' fill='white' font-family='sans-serif'>L</text></svg>",
       "wins": 3,
-      "kills": 35,
-      "damage": 9845.740000000002,
-      "giftValue": 4940,
-      "rounds": 60,
-      "lastSeen": "2026-10-15T09:06:48.277Z"
+      "kills": 36,
+      "damage": 11011.140000000001,
+      "giftValue": 5461,
+      "rounds": 64,
+      "lastSeen": "2026-10-15T09:42:32.334Z"
     },
     "7000000000026": {
       "userId": "7000000000026",
       "name": "Đặng Vy",
       "avatar": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64'><rect width='64' height='64' rx='32' fill='hsl(142,60%25,50%25)'/><text x='32' y='42' font-size='30' text-anchor='middle' fill='white' font-family='sans-serif'>V</text></svg>",
       "wins": 3,
-      "kills": 57,
-      "damage": 21940.048,
-      "giftValue": 76416,
-      "rounds": 66,
-      "lastSeen": "2026-10-15T09:06:48.277Z"
+      "kills": 59,
+      "damage": 22955.647999999997,
+      "giftValue": 76588,
+      "rounds": 69,
+      "lastSeen": "2026-10-15T09:42:32.334Z"
     },
     "7000000000023": {
       "userId": "7000000000023",
       "name": "Bùi Hùng",
       "avatar": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64'><rect width='64' height='64' rx='32' fill='hsl(1,60%25,50%25)'/><text x='32' y='42' font-size='30' text-anchor='middle' fill='white' font-family='sans-serif'>H</text></svg>",
       "wins": 1,
-      "kills": 78,
-      "damage": 22615.379999999997,
-      "giftValue": 147209,
-      "rounds": 63,
-      "lastSeen": "2026-10-15T09:06:48.277Z"
+      "kills": 83,
+      "damage": 23676.28,
+      "giftValue": 147224,
+      "rounds": 66,
+      "lastSeen": "2026-10-15T09:42:32.334Z"
     },
     "7000000000010": {
       "userId": "7000000000010",
       "name": "Trần Thảo",
       "avatar": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64'><rect width='64' height='64' rx='32' fill='hsl(110,60%25,50%25)'/><text x='32' y='42' font-size='30' text-anchor='middle' fill='white' font-family='sans-serif'>T</text></svg>",
       "wins": 3,
-      "kills": 69,
-      "damage": 20038.369999999995,
-      "giftValue": 42055,
-      "rounds": 65,
-      "lastSeen": "2026-10-15T09:06:48.277Z"
+      "kills": 74,
+      "damage": 21304.289999999997,
+      "giftValue": 42366,
+      "rounds": 68,
+      "lastSeen": "2026-10-15T09:42:32.334Z"
     },
     "7000000000014": {
       "userId": "7000000000014",
@@ -117,21 +117,21 @@
       "avatar": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64'><rect width='64' height='64' rx='32' fill='hsl(298,60%25,50%25)'/><text x='32' y='42' font-size='30' text-anchor='middle' fill='white' font-family='sans-serif'>K</text></svg>",
       "wins": 6,
       "kills": 63,
-      "damage": 13631.112,
-      "giftValue": 4976,
-      "rounds": 61,
-      "lastSeen": "2026-10-15T09:06:48.277Z"
+      "damage": 14330.312,
+      "giftValue": 5080,
+      "rounds": 64,
+      "lastSeen": "2026-10-15T09:42:32.334Z"
     },
     "7000000000011": {
       "userId": "7000000000011",
       "name": "Đặng Linh",
       "avatar": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64'><rect width='64' height='64' rx='32' fill='hsl(157,60%25,50%25)'/><text x='32' y='42' font-size='30' text-anchor='middle' fill='white' font-family='sans-serif'>L</text></svg>",
       "wins": 2,
-      "kills": 42,
-      "damage": 9372.62,
-      "giftValue": 6092,
-      "rounds": 60,
-      "lastSeen": "2026-10-15T09:06:48.277Z"
+      "kills": 43,
+      "damage": 10086.500000000002,
+      "giftValue": 6211,
+      "rounds": 64,
+      "lastSeen": "2026-10-15T09:42:32.334Z"
     },
     "7000000000046": {
       "userId": "7000000000046",
@@ -183,21 +183,21 @@
       "avatar": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64'><rect width='64' height='64' rx='32' fill='hsl(17,60%25,50%25)'/><text x='32' y='42' font-size='30' text-anchor='middle' fill='white' font-family='sans-serif'>Y</text></svg>",
       "wins": 3,
       "kills": 75,
-      "damage": 14042.9,
-      "giftValue": 146976,
-      "rounds": 63,
-      "lastSeen": "2026-10-15T09:06:48.277Z"
+      "damage": 15206.9,
+      "giftValue": 146981,
+      "rounds": 66,
+      "lastSeen": "2026-10-15T09:42:32.334Z"
     },
     "7000000000017": {
       "userId": "7000000000017",
       "name": "Vũ Thảo",
       "avatar": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64'><rect width='64' height='64' rx='32' fill='hsl(79,60%25,50%25)'/><text x='32' y='42' font-size='30' text-anchor='middle' fill='white' font-family='sans-serif'>T</text></svg>",
-      "wins": 5,
-      "kills": 101,
-      "damage": 22549.903999999995,
-      "giftValue": 87532,
-      "rounds": 63,
-      "lastSeen": "2026-10-15T09:06:48.277Z"
+      "wins": 6,
+      "kills": 106,
+      "damage": 23934.191999999985,
+      "giftValue": 87548,
+      "rounds": 67,
+      "lastSeen": "2026-10-15T09:42:32.334Z"
     },
     "7000000000034": {
       "userId": "7000000000034",
@@ -215,22 +215,22 @@
       "name": "Vũ Nam",
       "avatar": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64'><rect width='64' height='64' rx='32' fill='hsl(16,60%25,50%25)'/><text x='32' y='42' font-size='30' text-anchor='middle' fill='white' font-family='sans-serif'>N</text></svg>",
       "wins": 5,
-      "kills": 43,
-      "damage": 14226.603999999988,
-      "giftValue": 108784,
-      "rounds": 60,
-      "lastSeen": "2026-10-15T09:06:48.277Z"
+      "kills": 44,
+      "damage": 15256.747999999989,
+      "giftValue": 109097,
+      "rounds": 63,
+      "lastSeen": "2026-10-15T09:42:32.334Z"
     },
     "7000000000009": {
       "userId": "7000000000009",
       "name": "Hoàng Mai",
       "avatar": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64'><rect width='64' height='64' rx='32' fill='hsl(63,60%25,50%25)'/><text x='32' y='42' font-size='30' text-anchor='middle' fill='white' font-family='sans-serif'>M</text></svg>",
       "wins": 2,
-      "kills": 76,
-      "damage": 12544.060000000003,
-      "giftValue": 153767,
-      "rounds": 63,
-      "lastSeen": "2026-10-15T09:06:48.277Z"
+      "kills": 77,
+      "damage": 13629.460000000005,
+      "giftValue": 154182,
+      "rounds": 67,
+      "lastSeen": "2026-10-15T09:42:32.334Z"
     },
     "7000000000013": {
       "userId": "7000000000013",
@@ -238,21 +238,21 @@
       "avatar": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64'><rect width='64' height='64' rx='32' fill='hsl(251,60%25,50%25)'/><text x='32' y='42' font-size='30' text-anchor='middle' fill='white' font-family='sans-serif'>L</text></svg>",
       "wins": 0,
       "kills": 58,
-      "damage": 13971.739999999998,
-      "giftValue": 77744,
-      "rounds": 65,
-      "lastSeen": "2026-10-15T09:06:48.277Z"
+      "damage": 14718.539999999999,
+      "giftValue": 77749,
+      "rounds": 68,
+      "lastSeen": "2026-10-15T09:42:32.334Z"
     },
     "7000000000024": {
       "userId": "7000000000024",
       "name": "Lê Hùng",
       "avatar": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64'><rect width='64' height='64' rx='32' fill='hsl(48,60%25,50%25)'/><text x='32' y='42' font-size='30' text-anchor='middle' fill='white' font-family='sans-serif'>H</text></svg>",
       "wins": 3,
-      "kills": 65,
-      "damage": 14779.079999999998,
-      "giftValue": 146158,
-      "rounds": 63,
-      "lastSeen": "2026-10-15T09:06:48.277Z"
+      "kills": 68,
+      "damage": 16161.079999999998,
+      "giftValue": 146165,
+      "rounds": 67,
+      "lastSeen": "2026-10-15T09:42:32.334Z"
     },
     "7000000000043": {
       "userId": "7000000000043",
@@ -271,43 +271,43 @@
       "avatar": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64'><rect width='64' height='64' rx='32' fill='hsl(32,60%25,50%25)'/><text x='32' y='42' font-size='30' text-anchor='middle' fill='white' font-family='sans-serif'>N</text></svg>",
       "wins": 5,
       "kills": 75,
-      "damage": 22738.33999999999,
-      "giftValue": 76454,
-      "rounds": 64,
-      "lastSeen": "2026-10-15T09:06:48.277Z"
+      "damage": 23459.739999999987,
+      "giftValue": 76964,
+      "rounds": 68,
+      "lastSeen": "2026-10-15T09:42:32.334Z"
     },
     "7000000000006": {
       "userId": "7000000000006",
       "name": "Phạm Nam",
       "avatar": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64'><rect width='64' height='64' rx='32' fill='hsl(282,60%25,50%25)'/><text x='32' y='42' font-size='30' text-anchor='middle' fill='white' font-family='sans-serif'>N</text></svg>",
       "wins": 1,
-      "kills": 44,
-      "damage": 12527.34,
-      "giftValue": 80591,
-      "rounds": 59,
-      "lastSeen": "2026-10-15T09:06:48.277Z"
+      "kills": 45,
+      "damage": 13403.400000000001,
+      "giftValue": 80607,
+      "rounds": 62,
+      "lastSeen": "2026-10-15T09:42:32.334Z"
     },
     "7000000000004": {
       "userId": "7000000000004",
       "name": "Hoàng Lan",
       "avatar": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64'><rect width='64' height='64' rx='32' fill='hsl(188,60%25,50%25)'/><text x='32' y='42' font-size='30' text-anchor='middle' fill='white' font-family='sans-serif'>L</text></svg>",
       "wins": 3,
-      "kills": 34,
-      "damage": 11707.12,
-      "giftValue": 76385,
-      "rounds": 59,
-      "lastSeen": "2026-10-15T09:06:48.277Z"
+      "kills": 35,
+      "damage": 12439.52,
+      "giftValue": 76491,
+      "rounds": 63,
+      "lastSeen": "2026-10-15T09:42:32.334Z"
     },
     "7000000000005": {
       "userId": "7000000000005",
       "name": "Ngô Long",
       "avatar": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64'><rect width='64' height='64' rx='32' fill='hsl(235,60%25,50%25)'/><text x='32' y='42' font-size='30' text-anchor='middle' fill='white' font-family='sans-serif'>L</text></svg>",
       "wins": 0,
-      "kills": 23,
-      "damage": 7507.14,
-      "giftValue": 8887,
-      "rounds": 56,
-      "lastSeen": "2026-10-15T09:06:48.277Z"
+      "kills": 24,
+      "damage": 8711.84,
+      "giftValue": 8920,
+      "rounds": 60,
+      "lastSeen": "2026-10-15T09:42:32.334Z"
     },
     "7000000000029": {
       "userId": "7000000000029",
@@ -315,10 +315,10 @@
       "avatar": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64'><rect width='64' height='64' rx='32' fill='hsl(283,60%25,50%25)'/><text x='32' y='42' font-size='30' text-anchor='middle' fill='white' font-family='sans-serif'>M</text></svg>",
       "wins": 1,
       "kills": 41,
-      "damage": 8415.36,
-      "giftValue": 2333,
-      "rounds": 60,
-      "lastSeen": "2026-10-15T09:06:48.277Z"
+      "damage": 8985.560000000001,
+      "giftValue": 2338,
+      "rounds": 62,
+      "lastSeen": "2026-10-15T09:42:32.334Z"
     },
     "7000000000039": {
       "userId": "7000000000039",
@@ -337,10 +337,10 @@
       "avatar": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64'><rect width='64' height='64' rx='32' fill='hsl(111,60%25,50%25)'/><text x='32' y='42' font-size='30' text-anchor='middle' fill='white' font-family='sans-serif'>K</text></svg>",
       "wins": 1,
       "kills": 53,
-      "damage": 8214.359999999999,
-      "giftValue": 77963,
-      "rounds": 58,
-      "lastSeen": "2026-10-15T09:06:48.277Z"
+      "damage": 8755.46,
+      "giftValue": 78264,
+      "rounds": 61,
+      "lastSeen": "2026-10-15T09:42:32.334Z"
     },
     "7000000000045": {
       "userId": "7000000000045",
@@ -359,21 +359,21 @@
       "avatar": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64'><rect width='64' height='64' rx='32' fill='hsl(345,60%25,50%25)'/><text x='32' y='42' font-size='30' text-anchor='middle' fill='white' font-family='sans-serif'>L</text></svg>",
       "wins": 0,
       "kills": 54,
-      "damage": 12278.24,
-      "giftValue": 8629,
-      "rounds": 64,
-      "lastSeen": "2026-10-15T09:06:48.277Z"
+      "damage": 12958.240000000002,
+      "giftValue": 8754,
+      "rounds": 67,
+      "lastSeen": "2026-10-15T09:42:32.334Z"
     },
     "7000000000032": {
       "userId": "7000000000032",
       "name": "Trần Hà",
       "avatar": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64'><rect width='64' height='64' rx='32' fill='hsl(64,60%25,50%25)'/><text x='32' y='42' font-size='30' text-anchor='middle' fill='white' font-family='sans-serif'>H</text></svg>",
       "wins": 2,
-      "kills": 68,
-      "damage": 14467.760000000002,
-      "giftValue": 113092,
-      "rounds": 66,
-      "lastSeen": "2026-10-15T09:06:48.277Z"
+      "kills": 69,
+      "damage": 15239.800000000001,
+      "giftValue": 113191,
+      "rounds": 69,
+      "lastSeen": "2026-10-15T09:42:32.334Z"
     },
     "local_4": {
       "userId": "local_4",
@@ -689,21 +689,21 @@
       "avatar": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64'><rect width='64' height='64' rx='32' fill='hsl(220,60%25,50%25)'/><text x='32' y='42' font-size='30' text-anchor='middle' fill='white' font-family='sans-serif'>K</text></svg>",
       "wins": 2,
       "kills": 29,
-      "damage": 10580.875999999998,
-      "giftValue": 150296,
-      "rounds": 61,
-      "lastSeen": "2026-10-15T09:06:48.277Z"
+      "damage": 11782.875999999998,
+      "giftValue": 150303,
+      "rounds": 64,
+      "lastSeen": "2026-10-15T09:42:32.334Z"
     },
     "7000000000028": {
       "userId": "7000000000028",
       "name": "Nguyễn Hà",
       "avatar": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64'><rect width='64' height='64' rx='32' fill='hsl(236,60%25,50%25)'/><text x='32' y='42' font-size='30' text-anchor='middle' fill='white' font-family='sans-serif'>H</text></svg>",
       "wins": 0,
-      "kills": 107,
-      "damage": 24836.12999999999,
-      "giftValue": 76106,
-      "rounds": 66,
-      "lastSeen": "2026-10-15T09:06:48.277Z"
+      "kills": 109,
+      "damage": 26999.77999999999,
+      "giftValue": 76567,
+      "rounds": 70,
+      "lastSeen": "2026-10-15T09:42:32.334Z"
     },
     "7000000000044": {
       "userId": "7000000000044",
@@ -731,12 +731,12 @@
       "userId": "7000000000022",
       "name": "Hoàng Dũng",
       "avatar": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64'><rect width='64' height='64' rx='32' fill='hsl(314,60%25,50%25)'/><text x='32' y='42' font-size='30' text-anchor='middle' fill='white' font-family='sans-serif'>D</text></svg>",
-      "wins": 0,
-      "kills": 39,
-      "damage": 8266.24,
-      "giftValue": 11954,
-      "rounds": 62,
-      "lastSeen": "2026-10-15T09:06:48.277Z"
+      "wins": 1,
+      "kills": 42,
+      "damage": 9693.319999999998,
+      "giftValue": 12062,
+      "rounds": 65,
+      "lastSeen": "2026-10-15T09:42:32.334Z"
     },
     "7000000000021": {
       "userId": "7000000000021",
@@ -744,10 +744,10 @@
       "avatar": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64'><rect width='64' height='64' rx='32' fill='hsl(267,60%25,50%25)'/><text x='32' y='42' font-size='30' text-anchor='middle' fill='white' font-family='sans-serif'>T</text></svg>",
       "wins": 1,
       "kills": 45,
-      "damage": 13075.28,
-      "giftValue": 4149,
-      "rounds": 60,
-      "lastSeen": "2026-10-15T09:06:48.277Z"
+      "damage": 13624.480000000001,
+      "giftValue": 4308,
+      "rounds": 64,
+      "lastSeen": "2026-10-15T09:42:32.334Z"
     },
     "7000000000051": {
       "userId": "7000000000051",
@@ -765,11 +765,11 @@
       "name": "Nguyễn Minh",
       "avatar": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64'><rect width='64' height='64' rx='32' fill='hsl(95,60%25,50%25)'/><text x='32' y='42' font-size='30' text-anchor='middle' fill='white' font-family='sans-serif'>M</text></svg>",
       "wins": 2,
-      "kills": 53,
-      "damage": 11997.385999999999,
-      "giftValue": 148181,
-      "rounds": 62,
-      "lastSeen": "2026-10-15T09:06:48.277Z"
+      "kills": 56,
+      "damage": 12823.785999999998,
+      "giftValue": 148780,
+      "rounds": 65,
+      "lastSeen": "2026-10-15T09:42:32.334Z"
     },
     "7000000000037": {
       "userId": "7000000000037",
@@ -787,11 +787,11 @@
       "name": "Bùi Nam",
       "avatar": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64'><rect width='64' height='64' rx='32' fill='hsl(329,60%25,50%25)'/><text x='32' y='42' font-size='30' text-anchor='middle' fill='white' font-family='sans-serif'>N</text></svg>",
       "wins": 2,
-      "kills": 49,
-      "damage": 19966.079999999998,
-      "giftValue": 4020,
-      "rounds": 62,
-      "lastSeen": "2026-10-15T09:06:48.277Z"
+      "kills": 51,
+      "damage": 20936.791999999998,
+      "giftValue": 4265,
+      "rounds": 65,
+      "lastSeen": "2026-10-15T09:42:32.334Z"
     },
     "7000000000049": {
       "userId": "7000000000049",
@@ -809,11 +809,11 @@
       "name": "Nguyễn Long",
       "avatar": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64'><rect width='64' height='64' rx='32' fill='hsl(47,60%25,50%25)'/><text x='32' y='42' font-size='30' text-anchor='middle' fill='white' font-family='sans-serif'>L</text></svg>",
       "wins": 1,
-      "kills": 34,
-      "damage": 9365.09,
-      "giftValue": 184356,
-      "rounds": 57,
-      "lastSeen": "2026-10-15T09:06:48.277Z"
+      "kills": 40,
+      "damage": 10825.079999999998,
+      "giftValue": 184365,
+      "rounds": 61,
+      "lastSeen": "2026-10-15T09:42:32.334Z"
     },
     "7000000000040": {
       "userId": "7000000000040",
@@ -830,12 +830,12 @@
       "userId": "7000000000030",
       "name": "Vũ Hùng",
       "avatar": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64'><rect width='64' height='64' rx='32' fill='hsl(330,60%25,50%25)'/><text x='32' y='42' font-size='30' text-anchor='middle' fill='white' font-family='sans-serif'>H</text></svg>",
-      "wins": 3,
-      "kills": 83,
-      "damage": 19681.54,
-      "giftValue": 3532,
-      "rounds": 56,
-      "lastSeen": "2026-10-15T09:06:48.277Z"
+      "wins": 4,
+      "kills": 87,
+      "damage": 21236.9,
+      "giftValue": 4186,
+      "rounds": 59,
+      "lastSeen": "2026-10-15T09:42:32.334Z"
     },
     "7000000000041": {
       "userId": "7000000000041",
@@ -865,10 +865,10 @@
       "avatar": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64'><rect width='64' height='64' rx='32' fill='hsl(0,60%25,50%25)'/><text x='32' y='42' font-size='30' text-anchor='middle' fill='white' font-family='sans-serif'>D</text></svg>",
       "wins": 2,
       "kills": 52,
-      "damage": 11709.188,
-      "giftValue": 39496,
-      "rounds": 56,
-      "lastSeen": "2026-10-15T09:06:48.277Z"
+      "damage": 13619.728,
+      "giftValue": 39601,
+      "rounds": 60,
+      "lastSeen": "2026-10-15T09:42:32.334Z"
     },
     "7000000000048": {
       "userId": "7000000000048",
@@ -886,11 +886,11 @@
       "name": "Đặng Tuấn",
       "avatar": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64'><rect width='64' height='64' rx='32' fill='hsl(204,60%25,50%25)'/><text x='32' y='42' font-size='30' text-anchor='middle' fill='white' font-family='sans-serif'>T</text></svg>",
       "wins": 0,
-      "kills": 46,
-      "damage": 12349.27,
-      "giftValue": 143061,
-      "rounds": 56,
-      "lastSeen": "2026-10-15T09:06:48.277Z"
+      "kills": 47,
+      "damage": 12832.870000000003,
+      "giftValue": 143617,
+      "rounds": 60,
+      "lastSeen": "2026-10-15T09:42:32.334Z"
     }
   },
   "day": {
@@ -901,11 +901,11 @@
         "name": "Đặng Khoa",
         "avatar": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64'><rect width='64' height='64' rx='32' fill='hsl(189,60%25,50%25)'/><text x='32' y='42' font-size='30' text-anchor='middle' fill='white' font-family='sans-serif'>K</text></svg>",
         "wins": 2,
-        "kills": 78,
-        "damage": 12369.600000000004,
-        "giftValue": 8108,
-        "rounds": 62,
-        "lastSeen": "2026-10-15T09:06:48.277Z"
+        "kills": 81,
+        "damage": 13205.600000000004,
+        "giftValue": 8131,
+        "rounds": 65,
+        "lastSeen": "2026-10-15T09:42:32.334Z"
       },
       "7000000000031": {
         "userId": "7000000000031",
@@ -913,10 +913,10 @@
         "avatar": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64'><rect width='64' height='64' rx='32' fill='hsl(17,60%25,50%25)'/><text x='32' y='42' font-size='30' text-anchor='middle' fill='white' font-family='sans-serif'>Y</text></svg>",
         "wins": 3,
         "kills": 75,
-        "damage": 13961.9,
-        "giftValue": 146522,
-        "rounds": 62,
-        "lastSeen": "2026-10-15T09:06:48.277Z"
+        "damage": 15125.9,
+        "giftValue": 146527,
+        "rounds": 65,
+        "lastSeen": "2026-10-15T09:42:32.334Z"
       },
       "7000000000020": {
         "userId": "7000000000020",
@@ -924,21 +924,21 @@
         "avatar": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64'><rect width='64' height='64' rx='32' fill='hsl(220,60%25,50%25)'/><text x='32' y='42' font-size='30' text-anchor='middle' fill='white' font-family='sans-serif'>K</text></svg>",
         "wins": 2,
         "kills": 29,
-        "damage": 10580.875999999998,
-        "giftValue": 150296,
-        "rounds": 61,
-        "lastSeen": "2026-10-15T09:06:48.277Z"
+        "damage": 11782.875999999998,
+        "giftValue": 150303,
+        "rounds": 64,
+        "lastSeen": "2026-10-15T09:42:32.334Z"
       },
       "7000000000028": {
         "userId": "7000000000028",
         "name": "Nguyễn Hà",
         "avatar": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64'><rect width='64' height='64' rx='32' fill='hsl(236,60%25,50%25)'/><text x='32' y='42' font-size='30' text-anchor='middle' fill='white' font-family='sans-serif'>H</text></svg>",
         "wins": 0,
-        "kills": 107,
-        "damage": 24836.12999999999,
-        "giftValue": 76106,
-        "rounds": 66,
-        "lastSeen": "2026-10-15T09:06:48.277Z"
+        "kills": 109,
+        "damage": 26999.77999999999,
+        "giftValue": 76567,
+        "rounds": 70,
+        "lastSeen": "2026-10-15T09:42:32.334Z"
       },
       "7000000000044": {
         "userId": "7000000000044",
@@ -956,11 +956,11 @@
         "name": "Hoàng Mai",
         "avatar": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64'><rect width='64' height='64' rx='32' fill='hsl(63,60%25,50%25)'/><text x='32' y='42' font-size='30' text-anchor='middle' fill='white' font-family='sans-serif'>M</text></svg>",
         "wins": 2,
-        "kills": 76,
-        "damage": 12422.560000000003,
-        "giftValue": 153767,
-        "rounds": 62,
-        "lastSeen": "2026-10-15T09:06:48.277Z"
+        "kills": 77,
+        "damage": 13507.960000000005,
+        "giftValue": 154182,
+        "rounds": 66,
+        "lastSeen": "2026-10-15T09:42:32.334Z"
       },
       "7000000000038": {
         "userId": "7000000000038",
@@ -978,22 +978,22 @@
         "name": "Trần Thảo",
         "avatar": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64'><rect width='64' height='64' rx='32' fill='hsl(110,60%25,50%25)'/><text x='32' y='42' font-size='30' text-anchor='middle' fill='white' font-family='sans-serif'>T</text></svg>",
         "wins": 3,
-        "kills": 67,
-        "damage": 19886.569999999996,
-        "giftValue": 42050,
-        "rounds": 63,
-        "lastSeen": "2026-10-15T09:06:48.277Z"
+        "kills": 72,
+        "damage": 21152.489999999998,
+        "giftValue": 42361,
+        "rounds": 66,
+        "lastSeen": "2026-10-15T09:42:32.334Z"
       },
       "7000000000026": {
         "userId": "7000000000026",
         "name": "Đặng Vy",
         "avatar": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64'><rect width='64' height='64' rx='32' fill='hsl(142,60%25,50%25)'/><text x='32' y='42' font-size='30' text-anchor='middle' fill='white' font-family='sans-serif'>V</text></svg>",
         "wins": 3,
-        "kills": 57,
-        "damage": 21762.048,
-        "giftValue": 76312,
-        "rounds": 64,
-        "lastSeen": "2026-10-15T09:06:48.277Z"
+        "kills": 59,
+        "damage": 22777.647999999997,
+        "giftValue": 76484,
+        "rounds": 67,
+        "lastSeen": "2026-10-15T09:42:32.334Z"
       },
       "7000000000052": {
         "userId": "7000000000052",
@@ -1010,23 +1010,23 @@
         "userId": "7000000000022",
         "name": "Hoàng Dũng",
         "avatar": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64'><rect width='64' height='64' rx='32' fill='hsl(314,60%25,50%25)'/><text x='32' y='42' font-size='30' text-anchor='middle' fill='white' font-family='sans-serif'>D</text></svg>",
-        "wins": 0,
-        "kills": 39,
-        "damage": 8266.24,
-        "giftValue": 11954,
-        "rounds": 62,
-        "lastSeen": "2026-10-15T09:06:48.277Z"
+        "wins": 1,
+        "kills": 42,
+        "damage": 9693.319999999998,
+        "giftValue": 12062,
+        "rounds": 65,
+        "lastSeen": "2026-10-15T09:42:32.334Z"
       },
       "7000000000017": {
         "userId": "7000000000017",
         "name": "Vũ Thảo",
         "avatar": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64'><rect width='64' height='64' rx='32' fill='hsl(79,60%25,50%25)'/><text x='32' y='42' font-size='30' text-anchor='middle' fill='white' font-family='sans-serif'>T</text></svg>",
-        "wins": 5,
-        "kills": 98,
-        "damage": 22419.403999999995,
-        "giftValue": 87532,
-        "rounds": 62,
-        "lastSeen": "2026-10-15T09:06:48.277Z"
+        "wins": 6,
+        "kills": 103,
+        "damage": 23803.691999999985,
+        "giftValue": 87548,
+        "rounds": 66,
+        "lastSeen": "2026-10-15T09:42:32.334Z"
       },
       "7000000000021": {
         "userId": "7000000000021",
@@ -1034,21 +1034,21 @@
         "avatar": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64'><rect width='64' height='64' rx='32' fill='hsl(267,60%25,50%25)'/><text x='32' y='42' font-size='30' text-anchor='middle' fill='white' font-family='sans-serif'>T</text></svg>",
         "wins": 1,
         "kills": 45,
-        "damage": 13075.28,
-        "giftValue": 4149,
-        "rounds": 60,
-        "lastSeen": "2026-10-15T09:06:48.277Z"
+        "damage": 13624.480000000001,
+        "giftValue": 4308,
+        "rounds": 64,
+        "lastSeen": "2026-10-15T09:42:32.334Z"
       },
       "7000000000003": {
         "userId": "7000000000003",
         "name": "Trần Hùng",
         "avatar": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64'><rect width='64' height='64' rx='32' fill='hsl(141,60%25,50%25)'/><text x='32' y='42' font-size='30' text-anchor='middle' fill='white' font-family='sans-serif'>H</text></svg>",
         "wins": 0,
-        "kills": 21,
-        "damage": 9330.159999999998,
-        "giftValue": 4403,
-        "rounds": 63,
-        "lastSeen": "2026-10-15T09:06:48.277Z"
+        "kills": 25,
+        "damage": 10601.739999999998,
+        "giftValue": 39717,
+        "rounds": 67,
+        "lastSeen": "2026-10-15T09:42:32.334Z"
       },
       "7000000000029": {
         "userId": "7000000000029",
@@ -1056,21 +1056,21 @@
         "avatar": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64'><rect width='64' height='64' rx='32' fill='hsl(283,60%25,50%25)'/><text x='32' y='42' font-size='30' text-anchor='middle' fill='white' font-family='sans-serif'>M</text></svg>",
         "wins": 1,
         "kills": 41,
-        "damage": 8355.36,
-        "giftValue": 2333,
-        "rounds": 59,
-        "lastSeen": "2026-10-15T09:06:48.277Z"
+        "damage": 8925.560000000001,
+        "giftValue": 2338,
+        "rounds": 61,
+        "lastSeen": "2026-10-15T09:42:32.334Z"
       },
       "7000000000023": {
         "userId": "7000000000023",
         "name": "Bùi Hùng",
         "avatar": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64'><rect width='64' height='64' rx='32' fill='hsl(1,60%25,50%25)'/><text x='32' y='42' font-size='30' text-anchor='middle' fill='white' font-family='sans-serif'>H</text></svg>",
         "wins": 1,
-        "kills": 78,
-        "damage": 22566.379999999997,
-        "giftValue": 147204,
-        "rounds": 61,
-        "lastSeen": "2026-10-15T09:06:48.277Z"
+        "kills": 83,
+        "damage": 23627.28,
+        "giftValue": 147219,
+        "rounds": 64,
+        "lastSeen": "2026-10-15T09:42:32.334Z"
       },
       "7000000000051": {
         "userId": "7000000000051",
@@ -1088,11 +1088,11 @@
         "name": "Trần Hà",
         "avatar": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64'><rect width='64' height='64' rx='32' fill='hsl(64,60%25,50%25)'/><text x='32' y='42' font-size='30' text-anchor='middle' fill='white' font-family='sans-serif'>H</text></svg>",
         "wins": 2,
-        "kills": 68,
-        "damage": 14439.760000000002,
-        "giftValue": 113092,
-        "rounds": 65,
-        "lastSeen": "2026-10-15T09:06:48.277Z"
+        "kills": 69,
+        "damage": 15211.800000000001,
+        "giftValue": 113191,
+        "rounds": 68,
+        "lastSeen": "2026-10-15T09:42:32.334Z"
       },
       "7000000000039": {
         "userId": "7000000000039",
@@ -1143,22 +1143,22 @@
         "name": "Nguyễn Minh",
         "avatar": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64'><rect width='64' height='64' rx='32' fill='hsl(95,60%25,50%25)'/><text x='32' y='42' font-size='30' text-anchor='middle' fill='white' font-family='sans-serif'>M</text></svg>",
         "wins": 2,
-        "kills": 53,
-        "damage": 11997.385999999999,
-        "giftValue": 148181,
-        "rounds": 62,
-        "lastSeen": "2026-10-15T09:06:48.277Z"
+        "kills": 56,
+        "damage": 12823.785999999998,
+        "giftValue": 148780,
+        "rounds": 65,
+        "lastSeen": "2026-10-15T09:42:32.334Z"
       },
       "7000000000024": {
         "userId": "7000000000024",
         "name": "Lê Hùng",
         "avatar": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64'><rect width='64' height='64' rx='32' fill='hsl(48,60%25,50%25)'/><text x='32' y='42' font-size='30' text-anchor='middle' fill='white' font-family='sans-serif'>H</text></svg>",
         "wins": 3,
-        "kills": 64,
-        "damage": 14640.579999999998,
-        "giftValue": 146059,
-        "rounds": 62,
-        "lastSeen": "2026-10-15T09:06:48.277Z"
+        "kills": 67,
+        "damage": 16022.579999999998,
+        "giftValue": 146066,
+        "rounds": 66,
+        "lastSeen": "2026-10-15T09:42:32.334Z"
       },
       "7000000000050": {
         "userId": "7000000000050",
@@ -1187,11 +1187,11 @@
         "name": "Bùi Nam",
         "avatar": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64'><rect width='64' height='64' rx='32' fill='hsl(329,60%25,50%25)'/><text x='32' y='42' font-size='30' text-anchor='middle' fill='white' font-family='sans-serif'>N</text></svg>",
         "wins": 2,
-        "kills": 49,
-        "damage": 19966.079999999998,
-        "giftValue": 4020,
-        "rounds": 62,
-        "lastSeen": "2026-10-15T09:06:48.277Z"
+        "kills": 51,
+        "damage": 20936.791999999998,
+        "giftValue": 4265,
+        "rounds": 65,
+        "lastSeen": "2026-10-15T09:42:32.334Z"
       },
       "7000000000013": {
         "userId": "7000000000013",
@@ -1199,10 +1199,10 @@
         "avatar": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64'><rect width='64' height='64' rx='32' fill='hsl(251,60%25,50%25)'/><text x='32' y='42' font-size='30' text-anchor='middle' fill='white' font-family='sans-serif'>L</text></svg>",
         "wins": 0,
         "kills": 56,
-        "damage": 13844.739999999998,
-        "giftValue": 77645,
-        "rounds": 64,
-        "lastSeen": "2026-10-15T09:06:48.277Z"
+        "damage": 14591.539999999999,
+        "giftValue": 77650,
+        "rounds": 67,
+        "lastSeen": "2026-10-15T09:42:32.334Z"
       },
       "7000000000015": {
         "userId": "7000000000015",
@@ -1210,10 +1210,10 @@
         "avatar": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64'><rect width='64' height='64' rx='32' fill='hsl(345,60%25,50%25)'/><text x='32' y='42' font-size='30' text-anchor='middle' fill='white' font-family='sans-serif'>L</text></svg>",
         "wins": 0,
         "kills": 54,
-        "damage": 12221.24,
-        "giftValue": 8629,
-        "rounds": 63,
-        "lastSeen": "2026-10-15T09:06:48.277Z"
+        "damage": 12901.240000000002,
+        "giftValue": 8754,
+        "rounds": 66,
+        "lastSeen": "2026-10-15T09:42:32.334Z"
       },
       "7000000000049": {
         "userId": "7000000000049",
@@ -1254,10 +1254,10 @@
         "avatar": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64'><rect width='64' height='64' rx='32' fill='hsl(32,60%25,50%25)'/><text x='32' y='42' font-size='30' text-anchor='middle' fill='white' font-family='sans-serif'>N</text></svg>",
         "wins": 5,
         "kills": 74,
-        "damage": 22655.339999999993,
-        "giftValue": 76454,
-        "rounds": 63,
-        "lastSeen": "2026-10-15T09:06:48.277Z"
+        "damage": 23376.73999999999,
+        "giftValue": 76964,
+        "rounds": 67,
+        "lastSeen": "2026-10-15T09:42:32.334Z"
       },
       "7000000000033": {
         "userId": "7000000000033",
@@ -1265,43 +1265,43 @@
         "avatar": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64'><rect width='64' height='64' rx='32' fill='hsl(111,60%25,50%25)'/><text x='32' y='42' font-size='30' text-anchor='middle' fill='white' font-family='sans-serif'>K</text></svg>",
         "wins": 1,
         "kills": 52,
-        "damage": 8169.86,
-        "giftValue": 77953,
-        "rounds": 57,
-        "lastSeen": "2026-10-15T09:06:48.277Z"
+        "damage": 8710.96,
+        "giftValue": 78254,
+        "rounds": 60,
+        "lastSeen": "2026-10-15T09:42:32.334Z"
       },
       "7000000000005": {
         "userId": "7000000000005",
         "name": "Ngô Long",
         "avatar": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64'><rect width='64' height='64' rx='32' fill='hsl(235,60%25,50%25)'/><text x='32' y='42' font-size='30' text-anchor='middle' fill='white' font-family='sans-serif'>L</text></svg>",
         "wins": 0,
-        "kills": 23,
-        "damage": 7423.14,
-        "giftValue": 8887,
-        "rounds": 55,
-        "lastSeen": "2026-10-15T09:06:48.277Z"
+        "kills": 24,
+        "damage": 8627.84,
+        "giftValue": 8920,
+        "rounds": 59,
+        "lastSeen": "2026-10-15T09:42:32.334Z"
       },
       "7000000000006": {
         "userId": "7000000000006",
         "name": "Phạm Nam",
         "avatar": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64'><rect width='64' height='64' rx='32' fill='hsl(282,60%25,50%25)'/><text x='32' y='42' font-size='30' text-anchor='middle' fill='white' font-family='sans-serif'>N</text></svg>",
         "wins": 1,
-        "kills": 43,
-        "damage": 12421.34,
-        "giftValue": 80586,
-        "rounds": 58,
-        "lastSeen": "2026-10-15T09:06:48.277Z"
+        "kills": 44,
+        "damage": 13297.400000000001,
+        "giftValue": 80602,
+        "rounds": 61,
+        "lastSeen": "2026-10-15T09:42:32.334Z"
       },
       "7000000000001": {
         "userId": "7000000000001",
         "name": "Nguyễn Long",
         "avatar": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64'><rect width='64' height='64' rx='32' fill='hsl(47,60%25,50%25)'/><text x='32' y='42' font-size='30' text-anchor='middle' fill='white' font-family='sans-serif'>L</text></svg>",
         "wins": 1,
-        "kills": 34,
-        "damage": 9365.09,
-        "giftValue": 184356,
-        "rounds": 57,
-        "lastSeen": "2026-10-15T09:06:48.277Z"
+        "kills": 40,
+        "damage": 10825.079999999998,
+        "giftValue": 184365,
+        "rounds": 61,
+        "lastSeen": "2026-10-15T09:42:32.334Z"
       },
       "7000000000040": {
         "userId": "7000000000040",
@@ -1319,66 +1319,66 @@
         "name": "Vũ Nam",
         "avatar": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64'><rect width='64' height='64' rx='32' fill='hsl(16,60%25,50%25)'/><text x='32' y='42' font-size='30' text-anchor='middle' fill='white' font-family='sans-serif'>N</text></svg>",
         "wins": 5,
-        "kills": 42,
-        "damage": 14175.603999999988,
-        "giftValue": 108485,
-        "rounds": 59,
-        "lastSeen": "2026-10-15T09:06:48.277Z"
+        "kills": 43,
+        "damage": 15205.747999999989,
+        "giftValue": 108798,
+        "rounds": 62,
+        "lastSeen": "2026-10-15T09:42:32.334Z"
       },
       "7000000000004": {
         "userId": "7000000000004",
         "name": "Hoàng Lan",
         "avatar": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64'><rect width='64' height='64' rx='32' fill='hsl(188,60%25,50%25)'/><text x='32' y='42' font-size='30' text-anchor='middle' fill='white' font-family='sans-serif'>L</text></svg>",
         "wins": 3,
-        "kills": 34,
-        "damage": 11665.12,
-        "giftValue": 76385,
-        "rounds": 58,
-        "lastSeen": "2026-10-15T09:06:48.277Z"
+        "kills": 35,
+        "damage": 12397.52,
+        "giftValue": 76491,
+        "rounds": 62,
+        "lastSeen": "2026-10-15T09:42:32.334Z"
       },
       "7000000000011": {
         "userId": "7000000000011",
         "name": "Đặng Linh",
         "avatar": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64'><rect width='64' height='64' rx='32' fill='hsl(157,60%25,50%25)'/><text x='32' y='42' font-size='30' text-anchor='middle' fill='white' font-family='sans-serif'>L</text></svg>",
         "wins": 2,
-        "kills": 41,
-        "damage": 9052.62,
-        "giftValue": 6087,
-        "rounds": 58,
-        "lastSeen": "2026-10-15T09:06:48.277Z"
+        "kills": 42,
+        "damage": 9766.500000000002,
+        "giftValue": 6206,
+        "rounds": 62,
+        "lastSeen": "2026-10-15T09:42:32.334Z"
       },
       "7000000000030": {
         "userId": "7000000000030",
         "name": "Vũ Hùng",
         "avatar": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64'><rect width='64' height='64' rx='32' fill='hsl(330,60%25,50%25)'/><text x='32' y='42' font-size='30' text-anchor='middle' fill='white' font-family='sans-serif'>H</text></svg>",
-        "wins": 3,
-        "kills": 83,
-        "damage": 19681.54,
-        "giftValue": 3532,
-        "rounds": 56,
-        "lastSeen": "2026-10-15T09:06:48.277Z"
+        "wins": 4,
+        "kills": 87,
+        "damage": 21236.9,
+        "giftValue": 4186,
+        "rounds": 59,
+        "lastSeen": "2026-10-15T09:42:32.334Z"
       },
       "7000000000018": {
         "userId": "7000000000018",
         "name": "Bùi Lan",
         "avatar": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64'><rect width='64' height='64' rx='32' fill='hsl(126,60%25,50%25)'/><text x='32' y='42' font-size='30' text-anchor='middle' fill='white' font-family='sans-serif'>L</text></svg>",
         "wins": 1,
-        "kills": 37,
-        "damage": 8521.919999999998,
-        "giftValue": 74408,
-        "rounds": 56,
-        "lastSeen": "2026-10-15T09:06:48.277Z"
+        "kills": 38,
+        "damage": 9103.419999999998,
+        "giftValue": 74507,
+        "rounds": 60,
+        "lastSeen": "2026-10-15T09:42:32.334Z"
       },
       "7000000000019": {
         "userId": "7000000000019",
         "name": "Vũ Linh",
         "avatar": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64'><rect width='64' height='64' rx='32' fill='hsl(173,60%25,50%25)'/><text x='32' y='42' font-size='30' text-anchor='middle' fill='white' font-family='sans-serif'>L</text></svg>",
         "wins": 3,
-        "kills": 34,
-        "damage": 9754.740000000002,
-        "giftValue": 4935,
-        "rounds": 58,
-        "lastSeen": "2026-10-15T09:06:48.277Z"
+        "kills": 35,
+        "damage": 10920.140000000001,
+        "giftValue": 5456,
+        "rounds": 62,
+        "lastSeen": "2026-10-15T09:42:32.334Z"
       },
       "7000000000014": {
         "userId": "7000000000014",
@@ -1386,10 +1386,10 @@
         "avatar": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64'><rect width='64' height='64' rx='32' fill='hsl(298,60%25,50%25)'/><text x='32' y='42' font-size='30' text-anchor='middle' fill='white' font-family='sans-serif'>K</text></svg>",
         "wins": 6,
         "kills": 63,
-        "damage": 13509.112,
-        "giftValue": 4937,
-        "rounds": 59,
-        "lastSeen": "2026-10-15T09:06:48.277Z"
+        "damage": 14208.312,
+        "giftValue": 5041,
+        "rounds": 62,
+        "lastSeen": "2026-10-15T09:42:32.334Z"
       },
       "7000000000043": {
         "userId": "7000000000043",
@@ -1440,11 +1440,11 @@
         "name": "Phạm Thảo",
         "avatar": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64'><rect width='64' height='64' rx='32' fill='hsl(94,60%25,50%25)'/><text x='32' y='42' font-size='30' text-anchor='middle' fill='white' font-family='sans-serif'>T</text></svg>",
         "wins": 1,
-        "kills": 47,
-        "damage": 11617.16,
-        "giftValue": 7207,
-        "rounds": 59,
-        "lastSeen": "2026-10-15T09:06:48.277Z"
+        "kills": 52,
+        "damage": 13531.960000000001,
+        "giftValue": 7212,
+        "rounds": 63,
+        "lastSeen": "2026-10-15T09:42:32.334Z"
       },
       "7000000000000": {
         "userId": "7000000000000",
@@ -1452,10 +1452,10 @@
         "avatar": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64'><rect width='64' height='64' rx='32' fill='hsl(0,60%25,50%25)'/><text x='32' y='42' font-size='30' text-anchor='middle' fill='white' font-family='sans-serif'>D</text></svg>",
         "wins": 2,
         "kills": 52,
-        "damage": 11709.188,
-        "giftValue": 39496,
-        "rounds": 56,
-        "lastSeen": "2026-10-15T09:06:48.277Z"
+        "damage": 13619.728,
+        "giftValue": 39601,
+        "rounds": 60,
+        "lastSeen": "2026-10-15T09:42:32.334Z"
       },
       "7000000000048": {
         "userId": "7000000000048",
@@ -1473,11 +1473,11 @@
         "name": "Đặng Tuấn",
         "avatar": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64'><rect width='64' height='64' rx='32' fill='hsl(204,60%25,50%25)'/><text x='32' y='42' font-size='30' text-anchor='middle' fill='white' font-family='sans-serif'>T</text></svg>",
         "wins": 0,
-        "kills": 46,
-        "damage": 12349.27,
-        "giftValue": 143061,
-        "rounds": 56,
-        "lastSeen": "2026-10-15T09:06:48.277Z"
+        "kills": 47,
+        "damage": 12832.870000000003,
+        "giftValue": 143617,
+        "rounds": 60,
+        "lastSeen": "2026-10-15T09:42:32.334Z"
       }
     }
   },
@@ -1489,33 +1489,33 @@
         "name": "Trần Hùng",
         "avatar": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64'><rect width='64' height='64' rx='32' fill='hsl(141,60%25,50%25)'/><text x='32' y='42' font-size='30' text-anchor='middle' fill='white' font-family='sans-serif'>H</text></svg>",
         "wins": 1,
-        "kills": 25,
-        "damage": 9778.659999999998,
-        "giftValue": 4403,
-        "rounds": 65,
-        "lastSeen": "2026-10-15T09:06:48.277Z"
+        "kills": 29,
+        "damage": 11050.239999999998,
+        "giftValue": 39717,
+        "rounds": 69,
+        "lastSeen": "2026-10-15T09:42:32.334Z"
       },
       "7000000000027": {
         "userId": "7000000000027",
         "name": "Đặng Khoa",
         "avatar": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64'><rect width='64' height='64' rx='32' fill='hsl(189,60%25,50%25)'/><text x='32' y='42' font-size='30' text-anchor='middle' fill='white' font-family='sans-serif'>K</text></svg>",
         "wins": 2,
-        "kills": 82,
-        "damage": 12760.500000000004,
-        "giftValue": 8168,
-        "rounds": 64,
-        "lastSeen": "2026-10-15T09:06:48.277Z"
+        "kills": 85,
+        "damage": 13596.500000000004,
+        "giftValue": 8191,
+        "rounds": 67,
+        "lastSeen": "2026-10-15T09:42:32.334Z"
       },
       "7000000000002": {
         "userId": "7000000000002",
         "name": "Phạm Thảo",
         "avatar": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64'><rect width='64' height='64' rx='32' fill='hsl(94,60%25,50%25)'/><text x='32' y='42' font-size='30' text-anchor='middle' fill='white' font-family='sans-serif'>T</text></svg>",
         "wins": 1,
-        "kills": 52,
-        "damage": 12118.16,
-        "giftValue": 7212,
-        "rounds": 61,
-        "lastSeen": "2026-10-15T09:06:48.277Z"
+        "kills": 57,
+        "damage": 14032.960000000001,
+        "giftValue": 7217,
+        "rounds": 65,
+        "lastSeen": "2026-10-15T09:42:32.334Z"
       },
       "7000000000050": {
         "userId": "7000000000050",
@@ -1544,55 +1544,55 @@
         "name": "Bùi Lan",
         "avatar": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64'><rect width='64' height='64' rx='32' fill='hsl(126,60%25,50%25)'/><text x='32' y='42' font-size='30' text-anchor='middle' fill='white' font-family='sans-serif'>L</text></svg>",
         "wins": 1,
-        "kills": 38,
-        "damage": 8684.42,
-        "giftValue": 74710,
-        "rounds": 58,
-        "lastSeen": "2026-10-15T09:06:48.277Z"
+        "kills": 39,
+        "damage": 9265.92,
+        "giftValue": 74809,
+        "rounds": 62,
+        "lastSeen": "2026-10-15T09:42:32.334Z"
       },
       "7000000000019": {
         "userId": "7000000000019",
         "name": "Vũ Linh",
         "avatar": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64'><rect width='64' height='64' rx='32' fill='hsl(173,60%25,50%25)'/><text x='32' y='42' font-size='30' text-anchor='middle' fill='white' font-family='sans-serif'>L</text></svg>",
         "wins": 3,
-        "kills": 35,
-        "damage": 9845.740000000002,
-        "giftValue": 4940,
-        "rounds": 60,
-        "lastSeen": "2026-10-15T09:06:48.277Z"
+        "kills": 36,
+        "damage": 11011.140000000001,
+        "giftValue": 5461,
+        "rounds": 64,
+        "lastSeen": "2026-10-15T09:42:32.334Z"
       },
       "7000000000026": {
         "userId": "7000000000026",
         "name": "Đặng Vy",
         "avatar": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64'><rect width='64' height='64' rx='32' fill='hsl(142,60%25,50%25)'/><text x='32' y='42' font-size='30' text-anchor='middle' fill='white' font-family='sans-serif'>V</text></svg>",
         "wins": 3,
-        "kills": 57,
-        "damage": 21940.048,
-        "giftValue": 76416,
-        "rounds": 66,
-        "lastSeen": "2026-10-15T09:06:48.277Z"
+        "kills": 59,
+        "damage": 22955.647999999997,
+        "giftValue": 76588,
+        "rounds": 69,
+        "lastSeen": "2026-10-15T09:42:32.334Z"
       },
       "7000000000023": {
         "userId": "7000000000023",
         "name": "Bùi Hùng",
         "avatar": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64'><rect width='64' height='64' rx='32' fill='hsl(1,60%25,50%25)'/><text x='32' y='42' font-size='30' text-anchor='middle' fill='white' font-family='sans-serif'>H</text></svg>",
         "wins": 1,
-        "kills": 78,
-        "damage": 22615.379999999997,
-        "giftValue": 147209,
-        "rounds": 63,
-        "lastSeen": "2026-10-15T09:06:48.277Z"
+        "kills": 83,
+        "damage": 23676.28,
+        "giftValue": 147224,
+        "rounds": 66,
+        "lastSeen": "2026-10-15T09:42:32.334Z"
       },
       "7000000000010": {
         "userId": "7000000000010",
         "name": "Trần Thảo",
         "avatar": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64'><rect width='64' height='64' rx='32' fill='hsl(110,60%25,50%25)'/><text x='32' y='42' font-size='30' text-anchor='middle' fill='white' font-family='sans-serif'>T</text></svg>",
         "wins": 3,
-        "kills": 69,
-        "damage": 20038.369999999995,
-        "giftValue": 42055,
-        "rounds": 65,
-        "lastSeen": "2026-10-15T09:06:48.277Z"
+        "kills": 74,
+        "damage": 21304.289999999997,
+        "giftValue": 42366,
+        "rounds": 68,
+        "lastSeen": "2026-10-15T09:42:32.334Z"
       },
       "7000000000014": {
         "userId": "7000000000014",
@@ -1600,21 +1600,21 @@
         "avatar": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64'><rect width='64' height='64' rx='32' fill='hsl(298,60%25,50%25)'/><text x='32' y='42' font-size='30' text-anchor='middle' fill='white' font-family='sans-serif'>K</text></svg>",
         "wins": 6,
         "kills": 63,
-        "damage": 13631.112,
-        "giftValue": 4976,
-        "rounds": 61,
-        "lastSeen": "2026-10-15T09:06:48.277Z"
+        "damage": 14330.312,
+        "giftValue": 5080,
+        "rounds": 64,
+        "lastSeen": "2026-10-15T09:42:32.334Z"
       },
       "7000000000011": {
         "userId": "7000000000011",
         "name": "Đặng Linh",
         "avatar": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64'><rect width='64' height='64' rx='32' fill='hsl(157,60%25,50%25)'/><text x='32' y='42' font-size='30' text-anchor='middle' fill='white' font-family='sans-serif'>L</text></svg>",
         "wins": 2,
-        "kills": 42,
-        "damage": 9372.62,
-        "giftValue": 6092,
-        "rounds": 60,
-        "lastSeen": "2026-10-15T09:06:48.277Z"
+        "kills": 43,
+        "damage": 10086.500000000002,
+        "giftValue": 6211,
+        "rounds": 64,
+        "lastSeen": "2026-10-15T09:42:32.334Z"
       },
       "7000000000046": {
         "userId": "7000000000046",
@@ -1666,21 +1666,21 @@
         "avatar": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64'><rect width='64' height='64' rx='32' fill='hsl(17,60%25,50%25)'/><text x='32' y='42' font-size='30' text-anchor='middle' fill='white' font-family='sans-serif'>Y</text></svg>",
         "wins": 3,
         "kills": 75,
-        "damage": 14042.9,
-        "giftValue": 146976,
-        "rounds": 63,
-        "lastSeen": "2026-10-15T09:06:48.277Z"
+        "damage": 15206.9,
+        "giftValue": 146981,
+        "rounds": 66,
+        "lastSeen": "2026-10-15T09:42:32.334Z"
       },
       "7000000000017": {
         "userId": "7000000000017",
         "name": "Vũ Thảo",
         "avatar": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64'><rect width='64' height='64' rx='32' fill='hsl(79,60%25,50%25)'/><text x='32' y='42' font-size='30' text-anchor='middle' fill='white' font-family='sans-serif'>T</text></svg>",
-        "wins": 5,
-        "kills": 101,
-        "damage": 22549.903999999995,
-        "giftValue": 87532,
-        "rounds": 63,
-        "lastSeen": "2026-10-15T09:06:48.277Z"
+        "wins": 6,
+        "kills": 106,
+        "damage": 23934.191999999985,
+        "giftValue": 87548,
+        "rounds": 67,
+        "lastSeen": "2026-10-15T09:42:32.334Z"
       },
       "7000000000034": {
         "userId": "7000000000034",
@@ -1698,22 +1698,22 @@
         "name": "Vũ Nam",
         "avatar": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64'><rect width='64' height='64' rx='32' fill='hsl(16,60%25,50%25)'/><text x='32' y='42' font-size='30' text-anchor='middle' fill='white' font-family='sans-serif'>N</text></svg>",
         "wins": 5,
-        "kills": 43,
-        "damage": 14226.603999999988,
-        "giftValue": 108784,
-        "rounds": 60,
-        "lastSeen": "2026-10-15T09:06:48.277Z"
+        "kills": 44,
+        "damage": 15256.747999999989,
+        "giftValue": 109097,
+        "rounds": 63,
+        "lastSeen": "2026-10-15T09:42:32.334Z"
       },
       "7000000000009": {
         "userId": "7000000000009",
         "name": "Hoàng Mai",
         "avatar": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64'><rect width='64' height='64' rx='32' fill='hsl(63,60%25,50%25)'/><text x='32' y='42' font-size='30' text-anchor='middle' fill='white' font-family='sans-serif'>M</text></svg>",
         "wins": 2,
-        "kills": 76,
-        "damage": 12544.060000000003,
-        "giftValue": 153767,
-        "rounds": 63,
-        "lastSeen": "2026-10-15T09:06:48.277Z"
+        "kills": 77,
+        "damage": 13629.460000000005,
+        "giftValue": 154182,
+        "rounds": 67,
+        "lastSeen": "2026-10-15T09:42:32.334Z"
       },
       "7000000000013": {
         "userId": "7000000000013",
@@ -1721,21 +1721,21 @@
         "avatar": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64'><rect width='64' height='64' rx='32' fill='hsl(251,60%25,50%25)'/><text x='32' y='42' font-size='30' text-anchor='middle' fill='white' font-family='sans-serif'>L</text></svg>",
         "wins": 0,
         "kills": 58,
-        "damage": 13971.739999999998,
-        "giftValue": 77744,
-        "rounds": 65,
-        "lastSeen": "2026-10-15T09:06:48.277Z"
+        "damage": 14718.539999999999,
+        "giftValue": 77749,
+        "rounds": 68,
+        "lastSeen": "2026-10-15T09:42:32.334Z"
       },
       "7000000000024": {
         "userId": "7000000000024",
         "name": "Lê Hùng",
         "avatar": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64'><rect width='64' height='64' rx='32' fill='hsl(48,60%25,50%25)'/><text x='32' y='42' font-size='30' text-anchor='middle' fill='white' font-family='sans-serif'>H</text></svg>",
         "wins": 3,
-        "kills": 65,
-        "damage": 14779.079999999998,
-        "giftValue": 146158,
-        "rounds": 63,
-        "lastSeen": "2026-10-15T09:06:48.277Z"
+        "kills": 68,
+        "damage": 16161.079999999998,
+        "giftValue": 146165,
+        "rounds": 67,
+        "lastSeen": "2026-10-15T09:42:32.334Z"
       },
       "7000000000043": {
         "userId": "7000000000043",
@@ -1754,43 +1754,43 @@
         "avatar": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64'><rect width='64' height='64' rx='32' fill='hsl(32,60%25,50%25)'/><text x='32' y='42' font-size='30' text-anchor='middle' fill='white' font-family='sans-serif'>N</text></svg>",
         "wins": 5,
         "kills": 75,
-        "damage": 22738.33999999999,
-        "giftValue": 76454,
-        "rounds": 64,
-        "lastSeen": "2026-10-15T09:06:48.277Z"
+        "damage": 23459.739999999987,
+        "giftValue": 76964,
+        "rounds": 68,
+        "lastSeen": "2026-10-15T09:42:32.334Z"
       },
       "7000000000006": {
         "userId": "7000000000006",
         "name": "Phạm Nam",
         "avatar": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64'><rect width='64' height='64' rx='32' fill='hsl(282,60%25,50%25)'/><text x='32' y='42' font-size='30' text-anchor='middle' fill='white' font-family='sans-serif'>N</text></svg>",
         "wins": 1,
-        "kills": 44,
-        "damage": 12527.34,
-        "giftValue": 80591,
-        "rounds": 59,
-        "lastSeen": "2026-10-15T09:06:48.277Z"
+        "kills": 45,
+        "damage": 13403.400000000001,
+        "giftValue": 80607,
+        "rounds": 62,
+        "lastSeen": "2026-10-15T09:42:32.334Z"
       },
       "7000000000004": {
         "userId": "7000000000004",
         "name": "Hoàng Lan",
         "avatar": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64'><rect width='64' height='64' rx='32' fill='hsl(188,60%25,50%25)'/><text x='32' y='42' font-size='30' text-anchor='middle' fill='white' font-family='sans-serif'>L</text></svg>",
         "wins": 3,
-        "kills": 34,
-        "damage": 11707.12,
-        "giftValue": 76385,
-        "rounds": 59,
-        "lastSeen": "2026-10-15T09:06:48.277Z"
+        "kills": 35,
+        "damage": 12439.52,
+        "giftValue": 76491,
+        "rounds": 63,
+        "lastSeen": "2026-10-15T09:42:32.334Z"
       },
       "7000000000005": {
         "userId": "7000000000005",
         "name": "Ngô Long",
         "avatar": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64'><rect width='64' height='64' rx='32' fill='hsl(235,60%25,50%25)'/><text x='32' y='42' font-size='30' text-anchor='middle' fill='white' font-family='sans-serif'>L</text></svg>",
         "wins": 0,
-        "kills": 23,
-        "damage": 7507.14,
-        "giftValue": 8887,
-        "rounds": 56,
-        "lastSeen": "2026-10-15T09:06:48.277Z"
+        "kills": 24,
+        "damage": 8711.84,
+        "giftValue": 8920,
+        "rounds": 60,
+        "lastSeen": "2026-10-15T09:42:32.334Z"
       },
       "7000000000029": {
         "userId": "7000000000029",
@@ -1798,10 +1798,10 @@
         "avatar": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64'><rect width='64' height='64' rx='32' fill='hsl(283,60%25,50%25)'/><text x='32' y='42' font-size='30' text-anchor='middle' fill='white' font-family='sans-serif'>M</text></svg>",
         "wins": 1,
         "kills": 41,
-        "damage": 8415.36,
-        "giftValue": 2333,
-        "rounds": 60,
-        "lastSeen": "2026-10-15T09:06:48.277Z"
+        "damage": 8985.560000000001,
+        "giftValue": 2338,
+        "rounds": 62,
+        "lastSeen": "2026-10-15T09:42:32.334Z"
       },
       "7000000000039": {
         "userId": "7000000000039",
@@ -1820,10 +1820,10 @@
         "avatar": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64'><rect width='64' height='64' rx='32' fill='hsl(111,60%25,50%25)'/><text x='32' y='42' font-size='30' text-anchor='middle' fill='white' font-family='sans-serif'>K</text></svg>",
         "wins": 1,
         "kills": 53,
-        "damage": 8214.359999999999,
-        "giftValue": 77963,
-        "rounds": 58,
-        "lastSeen": "2026-10-15T09:06:48.277Z"
+        "damage": 8755.46,
+        "giftValue": 78264,
+        "rounds": 61,
+        "lastSeen": "2026-10-15T09:42:32.334Z"
       },
       "7000000000045": {
         "userId": "7000000000045",
@@ -1842,21 +1842,21 @@
         "avatar": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64'><rect width='64' height='64' rx='32' fill='hsl(345,60%25,50%25)'/><text x='32' y='42' font-size='30' text-anchor='middle' fill='white' font-family='sans-serif'>L</text></svg>",
         "wins": 0,
         "kills": 54,
-        "damage": 12278.24,
-        "giftValue": 8629,
-        "rounds": 64,
-        "lastSeen": "2026-10-15T09:06:48.277Z"
+        "damage": 12958.240000000002,
+        "giftValue": 8754,
+        "rounds": 67,
+        "lastSeen": "2026-10-15T09:42:32.334Z"
       },
       "7000000000032": {
         "userId": "7000000000032",
         "name": "Trần Hà",
         "avatar": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64'><rect width='64' height='64' rx='32' fill='hsl(64,60%25,50%25)'/><text x='32' y='42' font-size='30' text-anchor='middle' fill='white' font-family='sans-serif'>H</text></svg>",
         "wins": 2,
-        "kills": 68,
-        "damage": 14467.760000000002,
-        "giftValue": 113092,
-        "rounds": 66,
-        "lastSeen": "2026-10-15T09:06:48.277Z"
+        "kills": 69,
+        "damage": 15239.800000000001,
+        "giftValue": 113191,
+        "rounds": 69,
+        "lastSeen": "2026-10-15T09:42:32.334Z"
       },
       "local_4": {
         "userId": "local_4",
@@ -2172,21 +2172,21 @@
         "avatar": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64'><rect width='64' height='64' rx='32' fill='hsl(220,60%25,50%25)'/><text x='32' y='42' font-size='30' text-anchor='middle' fill='white' font-family='sans-serif'>K</text></svg>",
         "wins": 2,
         "kills": 29,
-        "damage": 10580.875999999998,
-        "giftValue": 150296,
-        "rounds": 61,
-        "lastSeen": "2026-10-15T09:06:48.277Z"
+        "damage": 11782.875999999998,
+        "giftValue": 150303,
+        "rounds": 64,
+        "lastSeen": "2026-10-15T09:42:32.334Z"
       },
       "7000000000028": {
         "userId": "7000000000028",
         "name": "Nguyễn Hà",
         "avatar": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64'><rect width='64' height='64' rx='32' fill='hsl(236,60%25,50%25)'/><text x='32' y='42' font-size='30' text-anchor='middle' fill='white' font-family='sans-serif'>H</text></svg>",
         "wins": 0,
-        "kills": 107,
-        "damage": 24836.12999999999,
-        "giftValue": 76106,
-        "rounds": 66,
-        "lastSeen": "2026-10-15T09:06:48.277Z"
+        "kills": 109,
+        "damage": 26999.77999999999,
+        "giftValue": 76567,
+        "rounds": 70,
+        "lastSeen": "2026-10-15T09:42:32.334Z"
       },
       "7000000000044": {
         "userId": "7000000000044",
@@ -2214,12 +2214,12 @@
         "userId": "7000000000022",
         "name": "Hoàng Dũng",
         "avatar": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64'><rect width='64' height='64' rx='32' fill='hsl(314,60%25,50%25)'/><text x='32' y='42' font-size='30' text-anchor='middle' fill='white' font-family='sans-serif'>D</text></svg>",
-        "wins": 0,
-        "kills": 39,
-        "damage": 8266.24,
-        "giftValue": 11954,
-        "rounds": 62,
-        "lastSeen": "2026-10-15T09:06:48.277Z"
+        "wins": 1,
+        "kills": 42,
+        "damage": 9693.319999999998,
+        "giftValue": 12062,
+        "rounds": 65,
+        "lastSeen": "2026-10-15T09:42:32.334Z"
       },
       "7000000000021": {
         "userId": "7000000000021",
@@ -2227,10 +2227,10 @@
         "avatar": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64'><rect width='64' height='64' rx='32' fill='hsl(267,60%25,50%25)'/><text x='32' y='42' font-size='30' text-anchor='middle' fill='white' font-family='sans-serif'>T</text></svg>",
         "wins": 1,
         "kills": 45,
-        "damage": 13075.28,
-        "giftValue": 4149,
-        "rounds": 60,
-        "lastSeen": "2026-10-15T09:06:48.277Z"
+        "damage": 13624.480000000001,
+        "giftValue": 4308,
+        "rounds": 64,
+        "lastSeen": "2026-10-15T09:42:32.334Z"
       },
       "7000000000051": {
         "userId": "7000000000051",
@@ -2248,11 +2248,11 @@
         "name": "Nguyễn Minh",
         "avatar": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64'><rect width='64' height='64' rx='32' fill='hsl(95,60%25,50%25)'/><text x='32' y='42' font-size='30' text-anchor='middle' fill='white' font-family='sans-serif'>M</text></svg>",
         "wins": 2,
-        "kills": 53,
-        "damage": 11997.385999999999,
-        "giftValue": 148181,
-        "rounds": 62,
-        "lastSeen": "2026-10-15T09:06:48.277Z"
+        "kills": 56,
+        "damage": 12823.785999999998,
+        "giftValue": 148780,
+        "rounds": 65,
+        "lastSeen": "2026-10-15T09:42:32.334Z"
       },
       "7000000000037": {
         "userId": "7000000000037",
@@ -2270,11 +2270,11 @@
         "name": "Bùi Nam",
         "avatar": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64'><rect width='64' height='64' rx='32' fill='hsl(329,60%25,50%25)'/><text x='32' y='42' font-size='30' text-anchor='middle' fill='white' font-family='sans-serif'>N</text></svg>",
         "wins": 2,
-        "kills": 49,
-        "damage": 19966.079999999998,
-        "giftValue": 4020,
-        "rounds": 62,
-        "lastSeen": "2026-10-15T09:06:48.277Z"
+        "kills": 51,
+        "damage": 20936.791999999998,
+        "giftValue": 4265,
+        "rounds": 65,
+        "lastSeen": "2026-10-15T09:42:32.334Z"
       },
       "7000000000049": {
         "userId": "7000000000049",
@@ -2292,11 +2292,11 @@
         "name": "Nguyễn Long",
         "avatar": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64'><rect width='64' height='64' rx='32' fill='hsl(47,60%25,50%25)'/><text x='32' y='42' font-size='30' text-anchor='middle' fill='white' font-family='sans-serif'>L</text></svg>",
         "wins": 1,
-        "kills": 34,
-        "damage": 9365.09,
-        "giftValue": 184356,
-        "rounds": 57,
-        "lastSeen": "2026-10-15T09:06:48.277Z"
+        "kills": 40,
+        "damage": 10825.079999999998,
+        "giftValue": 184365,
+        "rounds": 61,
+        "lastSeen": "2026-10-15T09:42:32.334Z"
       },
       "7000000000040": {
         "userId": "7000000000040",
@@ -2313,12 +2313,12 @@
         "userId": "7000000000030",
         "name": "Vũ Hùng",
         "avatar": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64'><rect width='64' height='64' rx='32' fill='hsl(330,60%25,50%25)'/><text x='32' y='42' font-size='30' text-anchor='middle' fill='white' font-family='sans-serif'>H</text></svg>",
-        "wins": 3,
-        "kills": 83,
-        "damage": 19681.54,
-        "giftValue": 3532,
-        "rounds": 56,
-        "lastSeen": "2026-10-15T09:06:48.277Z"
+        "wins": 4,
+        "kills": 87,
+        "damage": 21236.9,
+        "giftValue": 4186,
+        "rounds": 59,
+        "lastSeen": "2026-10-15T09:42:32.334Z"
       },
       "7000000000041": {
         "userId": "7000000000041",
@@ -2348,10 +2348,10 @@
         "avatar": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64'><rect width='64' height='64' rx='32' fill='hsl(0,60%25,50%25)'/><text x='32' y='42' font-size='30' text-anchor='middle' fill='white' font-family='sans-serif'>D</text></svg>",
         "wins": 2,
         "kills": 52,
-        "damage": 11709.188,
-        "giftValue": 39496,
-        "rounds": 56,
-        "lastSeen": "2026-10-15T09:06:48.277Z"
+        "damage": 13619.728,
+        "giftValue": 39601,
+        "rounds": 60,
+        "lastSeen": "2026-10-15T09:42:32.334Z"
       },
       "7000000000048": {
         "userId": "7000000000048",
@@ -2369,11 +2369,11 @@
         "name": "Đặng Tuấn",
         "avatar": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64'><rect width='64' height='64' rx='32' fill='hsl(204,60%25,50%25)'/><text x='32' y='42' font-size='30' text-anchor='middle' fill='white' font-family='sans-serif'>T</text></svg>",
         "wins": 0,
-        "kills": 46,
-        "damage": 12349.27,
-        "giftValue": 143061,
-        "rounds": 56,
-        "lastSeen": "2026-10-15T09:06:48.277Z"
+        "kills": 47,
+        "damage": 12832.870000000003,
+        "giftValue": 143617,
+        "rounds": 60,
+        "lastSeen": "2026-10-15T09:42:32.334Z"
       }
     }
   },
@@ -2449,6 +2449,10 @@
     "977dba15-3da6-4773-a51b-ed6f3170ce45:1",
     "977dba15-3da6-4773-a51b-ed6f3170ce45:2",
     "977dba15-3da6-4773-a51b-ed6f3170ce45:3",
-    "977dba15-3da6-4773-a51b-ed6f3170ce45:4"
+    "977dba15-3da6-4773-a51b-ed6f3170ce45:4",
+    "226c8008-73f2-4db7-8aab-6e1d72291c35:1",
+    "226c8008-73f2-4db7-8aab-6e1d72291c35:2",
+    "226c8008-73f2-4db7-8aab-6e1d72291c35:3",
+    "226c8008-73f2-4db7-8aab-6e1d72291c35:4"
   ]
 }

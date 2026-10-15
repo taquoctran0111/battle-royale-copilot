@@ -31,6 +31,7 @@ const schemas = {
   'trap:spawned': { id: 'string', x: 'number', y: 'number', kind: ['spike', 'bomb'] },
   'trap:triggered': { id: 'string', x: 'number', y: 'number', victims: 'ids' },
   'boss:spawned': { id: 'string', hp: 'number', maxHp: 'number' },
+  'boss:request': {},
   'boss:damaged': { hp: 'number', maxHp: 'number', byId: 'nullableString' },
   'boss:defeated': { topDamagers: 'damagers', killerId: '?nullableString', bossType: '?string', x: '?number', y: '?number' },
   'boss:skill': { bossId: 'string', bossType: ['fire', 'ice', 'forest', 'dark', 'fusion'], stage: ['warning', 'impact'], x: 'number', y: 'number', radius: 'number' },

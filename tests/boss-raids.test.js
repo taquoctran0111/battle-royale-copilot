@@ -72,11 +72,74 @@ test('boss variants: random selection reaches all four minor bosses, once per or
         assert.equal(boss.mana, 0);
         g.bus.emit('damage:request', { targetId: boss.id, sourceId: 'hero', cause: 'attack', amount: 100000 });
         g.bus.emit('energy:add', { amount: 100 });
+        g.state.time += g.cfg.bosses.minorSpawnSec;
+        g.events.update(.01);
         assert.equal(g.log.filter(({ type }) => type === 'boss:spawned').length, 1);
         assert.equal(g.state.phase, 'BATTLE');
       } finally { g.dispose(); }
     }
   } finally { Math.random = original; }
+});
+
+test('boss balance: minor HP reduced 30%, fusion HP increased 50%, mana timings preserved', () => {
+  const old = { fire: [1, 10], ice: [1.1, 12], forest: [1.15, 13], dark: [.95, 11] };
+  for (const [type, [hpMult, fillSec]] of Object.entries(old)) {
+    assert.ok(Math.abs(config.bosses[type].hpMult - hpMult * .7) < 1e-10);
+    assert.equal(config.bosses[type].fillSec, fillSec * 1.5);
+  }
+  assert.equal(config.bosses.fusion.hp, 6500 * 1.5);
+  assert.equal(config.bosses.fusion.hpPerPlayer, 200 * 1.5);
+  assert.equal(config.bosses.fusion.fillSec, 8);
+});
+
+test('guaranteed minor boss: exact 20-second deadline, low population, no duplicate after kill and reset next round', () => {
+  const g = game(1);
+  try {
+    g.cfg.events.list = g.cfg.events.list.filter(({ type }) => type !== 'boss');
+    g.battle();
+    const started = g.state.time;
+    assert.equal(g.state.boss, null);
+    g.state.phase = 'FINAL';
+    g.state.time = started + 19.999;
+    g.events.update(.001);
+    assert.equal(g.state.boss, null);
+    g.state.time = started + 20;
+    g.events.update(.001);
+    assert.ok(g.cfg.bosses.minorOrder.includes(g.state.boss.type));
+    assert.equal(g.log.filter(({ type }) => type === 'boss:spawned').length, 1);
+    g.bus.emit('damage:request', { targetId: g.state.boss.id, sourceId: 'hero', cause: 'skill', amount: 100000 });
+    g.bus.emit('boss:request', {});
+    g.bus.emit('energy:add', { amount: 100 });
+    g.state.time += 100;
+    g.events.update(.01);
+    assert.equal(g.log.filter(({ type }) => type === 'boss:spawned').length, 1);
+    g.bus.emit('damage:request', { targetId: 'second', sourceId: null, cause: 'zone', amount: 100000 });
+    g.round.update(.01);
+    assert.equal(g.state.phase, 'RESULT');
+    g.round.update(.1);
+    g.battle();
+    g.state.time += 20;
+    g.events.update(.01);
+    assert.equal(g.log.filter(({ type }) => type === 'boss:spawned').length, 2);
+  } finally { g.dispose(); }
+});
+
+test('early minor boss: sole survivor keeps fighting but deadline and team wipe still end the round', () => {
+  for (const ending of ['boss', 'wipe', 'timeout']) {
+    const g = game(1);
+    try {
+      g.battle();
+      g.bus.emit('damage:request', { targetId: 'second', sourceId: null, cause: 'zone', amount: 100000 });
+      assert.ok(g.state.boss, 'early death summons boss before results');
+      g.round.update(.01);
+      assert.notEqual(g.state.phase, 'RESULT');
+      if (ending === 'boss') g.bus.emit('damage:request', { targetId: g.state.boss.id, sourceId: 'hero', cause: 'skill', amount: 100000 });
+      if (ending === 'wipe') g.bus.emit('damage:request', { targetId: 'hero', sourceId: null, cause: 'zone', amount: 100000 });
+      g.round.update(ending === 'timeout' ? g.cfg.phases.durationSec.BATTLE + g.cfg.phases.durationSec.FINAL : .01);
+      assert.equal(g.state.phase, 'RESULT');
+      assert.equal(g.log.filter(({ type }) => type === 'boss:spawned').length, 1);
+    } finally { g.dispose(); }
+  }
 });
 
 test('raid cycle: fusion spawns immediately only on rounds 3/6, no random weather or shrinking zone', () => {
@@ -89,6 +152,8 @@ test('raid cycle: fusion spawns immediately only on rounds 3/6, no random weathe
       if (roundId % 3 === 0) {
         raids.push(roundId);
         assert.equal(g.state.boss.type, 'fusion');
+        assert.equal(g.state.boss.maxHp, 9750 + 300 * getAlive(g.state).length);
+        assert.equal(g.state.boss.hp, g.state.boss.maxHp);
         assert.ok(g.state.boss.maxHp > config.events.list.find((event) => event.type === 'boss').hp * 4);
         const boss = g.state.boss, radius = g.state.zone.radius;
         g.bus.emit('energy:add', { amount: 1000 });
@@ -104,6 +169,7 @@ test('raid cycle: fusion spawns immediately only on rounds 3/6, no random weathe
         for (const player of getAlive(g.state).slice(1)) {
           g.bus.emit('damage:request', { targetId: player.id, sourceId: null, cause: 'zone', amount: 10000 });
         }
+        if (g.state.boss) g.bus.emit('damage:request', { targetId: g.state.boss.id, sourceId: 'hero', cause: 'skill', amount: 100000 });
         g.round.update(.01);
       }
       assert.equal(g.state.phase, 'RESULT');
@@ -175,6 +241,7 @@ for (const bot of [false, true]) {
       for (const player of getAlive(g.state).filter((player) => player !== hero)) {
         g.bus.emit('damage:request', { targetId: player.id, sourceId: null, cause: 'zone', amount: 10000 });
       }
+      if (g.state.boss) g.bus.emit('damage:request', { targetId: g.state.boss.id, sourceId: hero.id, cause: 'skill', amount: 100000 });
       g.round.update(.01);
       g.round.update(.1);
       assert.equal(g.state.roundId, 5);

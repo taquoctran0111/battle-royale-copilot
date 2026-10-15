@@ -1260,7 +1260,7 @@ test('events: boss requires four alive, spawns once per round and rewards top da
   bus.emit('damage:request', { targetId: top.id, amount: 80, cause: 'zone' });
   bus.emit('damage:request', { targetId: second.id, amount: 80, cause: 'zone' });
   const bossId = state.boss.id;
-  bus.emit('damage:request', { targetId: bossId, amount: 70, sourceId: top.id, cause: 'attack' });
+  bus.emit('damage:request', { targetId: bossId, amount: state.boss.maxHp * .7, sourceId: top.id, cause: 'attack' });
   bus.emit('damage:request', { targetId: bossId, amount: state.boss.hp, sourceId: second.id, cause: 'attack' });
   assert.equal(state.boss, null);
   assert.equal(top.hp, Math.min(top.maxHp, top.maxHp - 80 + top.maxHp * cfg.events.bossRewardHealPercent));
@@ -1352,7 +1352,7 @@ test('events: hotspot spike damages entrants once, automatic schedules respect p
   state.players.set(player.id, player);
   let triggered = 0;
   let damage = 0;
-  bus.on('event:triggered', () => { triggered += 1; });
+  bus.on('event:triggered', ({ type }) => { if (type !== 'boss') triggered += 1; });
   bus.on('damage:request', (request) => { assert.equal(request.cause, 'trap'); damage += 1; });
   state.phase = 'BATTLE';
   bus.emit('round:phase', { phase: 'BATTLE' });

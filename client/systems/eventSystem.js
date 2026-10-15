@@ -7,6 +7,7 @@ export function createEventSystem({ bus, state, config }) {
   let nextEventAt = Infinity;
   let nextTrapAt = Infinity;
   let nextDropAt = Infinity;
+  let minorBossAt = Infinity;
   let bossSpawned = false;
   let bossRewarded = false;
   let triggering = false;
@@ -96,6 +97,14 @@ export function createEventSystem({ bus, state, config }) {
     bus.emit('boss:spawned', { id: state.boss.id, hp, maxHp: hp });
   }
 
+  function spawnMinorBoss() {
+    if (!active() || state.mode === 'raid' || bossSpawned || state.boss) return;
+    const base = config.events.list.find((event) => event.type === 'boss') ?? config.bosses.minorBase;
+    const order = config.bosses.minorOrder;
+    spawnBoss(order[Math.floor(Math.random() * order.length)], base);
+    bus.emit('event:triggered', { type: 'boss' });
+  }
+
   function triggerRandomEvent(consumeEnergy = false) {
     if (!active() || state.mode === 'raid' || triggering) return false;
     const event = chooseEvent();
@@ -161,6 +170,10 @@ export function createEventSystem({ bus, state, config }) {
     }
   }));
   off.push(bus.on('boss:spawned', () => { if (active()) bossSpawned = true; }));
+  off.push(bus.on('boss:request', spawnMinorBoss));
+  off.push(bus.on('player:killed', () => {
+    if (getAlive(state).length <= config.events.bossMinAlive) spawnMinorBoss();
+  }));
   off.push(bus.on('boss:defeated', (payload) => {
     if (!active() || state.mode === 'raid' || !bossSpawned || bossRewarded || !Array.isArray(payload?.topDamagers)) return;
     bossRewarded = true;
@@ -190,6 +203,9 @@ export function createEventSystem({ bus, state, config }) {
   off.push(bus.on('round:phase', (payload) => {
     if (payload?.phase === 'BATTLE') {
       if (state.mode === 'raid') spawnBoss('fusion');
+      minorBossAt = state.mode === 'raid' ? Infinity :
+        state.time + Math.min(config.bosses.minorSpawnSec, (config.phases.durationSec.BATTLE + config.phases.durationSec.FINAL) / 2);
+      if (getAlive(state).length === 1) spawnMinorBoss();
       scheduleEvent();
       nextTrapAt = state.time + randRange(...config.events.trapSpawnSec);
       nextDropAt = state.time + randRange(...config.events.dropSpawnSec);
@@ -202,6 +218,7 @@ export function createEventSystem({ bus, state, config }) {
       bossSpawned = false;
       bossRewarded = false;
       nextEventAt = nextTrapAt = nextDropAt = Infinity;
+      minorBossAt = Infinity;
       state.energy.value = config.events.energy.resetAfterTrigger;
       publishEnergy();
     }
@@ -209,6 +226,10 @@ export function createEventSystem({ bus, state, config }) {
 
   function update(dt) {
     if (!active() || !Number.isFinite(dt) || dt <= 0) return;
+    if (state.time >= minorBossAt) {
+      minorBossAt = Infinity;
+      spawnMinorBoss();
+    }
     if (state.energy.value >= config.events.energy.triggerThreshold && state.mode !== 'raid') {
       triggerRandomEvent(true);
     }
