@@ -2,6 +2,7 @@
 // Giả lập sự kiện TikTok, CÙNG interface với tiktokAdapter:
 //   createMockAdapter({ onEvent, onStatus, intensity }) -> { connect, disconnect, send, setIntensity, getIntensity }
 // Payload sinh ra khớp đúng catalog live:*.
+import { createMockActions, mockJoinText } from '../client/net/mockActions.js';
 
 const INTENSITY = {
   //        chat (ms)      like (ms)   gift (ms)        social (ms)
@@ -54,7 +55,7 @@ export function createMockAdapter({ onEvent, onStatus, intensity = 'medium' } = 
 
   // 30–60 người dùng ảo (ID số dạng chuỗi như TikTok userId)
   const users = Array.from({ length: randInt(30, 60) }, (_, i) => {
-    const nickname = `${pick(HO)} ${pick(TEN)}`;
+    const nickname = `${pick(HO)} ${pick(TEN)} ${i + 1}`;
     return {
       userId: String(7000000000000 + i),
       uniqueId: `user_${i + 1}`,
@@ -106,13 +107,10 @@ export function createMockAdapter({ onEvent, onStatus, intensity = 'medium' } = 
     const u = pick(users);
     const other = pick(users.filter((x) => x !== u));
     const text = weighted([
-      ['ĐÁNH', 30],
-      ['NÉ', 20],
-      ['JOIN', 10],
-      [`HỢP TÁC ${other.nickname}`, 15],
-      ['PHẢN BỘI', 8],
+      ['NÉ', 45],
+      [mockJoinText(users.indexOf(u)), 10],
       [`CỨU ${other.nickname}`, 12],
-      [pick(CHATTER), 5],
+      [pick(CHATTER), 15],
     ]);
     return ['live:chat', { ...userFields(u), text }];
   }
@@ -168,7 +166,7 @@ export function createMockAdapter({ onEvent, onStatus, intensity = 'medium' } = 
     let out;
     switch (type) {
       case 'live:chat':
-        out = { ...user, text: String(p.text ?? 'ĐÁNH') };
+        out = { ...user, text: String(p.text ?? 'NÉ') };
         break;
       case 'live:gift': {
         const count = Math.max(1, Number(p.count) || 1);
@@ -202,12 +200,17 @@ export function createMockAdapter({ onEvent, onStatus, intensity = 'medium' } = 
       users.forEach((u, i) => {
         const t = setTimeout(() => {
           timers.delete(t);
-          if (running) emit('live:join', userFields(u));
+          if (running) {
+            emit('live:join', userFields(u));
+            emit('live:chat', { ...userFields(u), text: mockJoinText(i) });
+          }
         }, 200 + i * 80);
         timers.add(t);
       });
 
       const cfg = () => INTENSITY[level];
+      const actions = createMockActions({ emit, getUsers: () => users });
+      loop(() => 1000, () => actions.update());
       loop(() => rand(...cfg().chat), () => emitGen(genChat));
       loop(() => cfg().like * rand(0.6, 1.4), () => emitGen(genLike));
       loop(() => rand(...cfg().gift), () => emitGen(genGift));

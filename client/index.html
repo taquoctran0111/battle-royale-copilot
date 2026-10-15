@@ -94,40 +94,69 @@
     .transparent #arena { background: transparent; }
     .transparent #hud::before { background: transparent; }
   </style>
+  <link rel="stylesheet" href="./ui/neon.css">
 </head>
 <body>
   <canvas id="arena" width="1080" height="1920" aria-label="Đấu trường sinh tồn"></canvas>
   <main id="hud" data-phase="LOBBY">
     <header class="topline">
-      <div class="brand">ĐẤU TRƯỜNG<br>SINH TỒN</div>
+      <div class="brand"><span class="live-badge">LIVE</span> ĐẤU TRƯỜNG<br><strong>SINH TỒN</strong><small>Đấu trí · Liên minh · Sống sót</small></div>
       <div class="status">
         <div class="phase-time"><span id="phase-label">SẢNH CHỜ</span><span id="phase-clock">0:45</span></div>
         <div id="connection-label" data-state="offline">ĐANG KẾT NỐI</div>
-        <div class="audio-controls"><button id="audio-toggle" type="button" aria-pressed="false" aria-label="Bật âm thanh" title="Bật âm thanh">&#128263;</button><input id="audio-volume" type="range" min="0" max="1" step="0.01" aria-label="Âm lượng" title="Âm lượng"></div>
+        <div class="audio-controls"><button id="audio-toggle" type="button" aria-pressed="false" aria-label="Bật âm thanh" title="Bật âm thanh">&#128263;</button><button id="music-toggle" type="button" aria-pressed="true" aria-label="Tắt nhạc nền" title="Tắt nhạc nền">&#9835;</button><input id="audio-volume" type="range" min="0" max="1" step="0.01" aria-label="Âm lượng" title="Âm lượng"></div>
       </div>
     </header>
+    <nav class="phase-strip" aria-label="Tiến trình vòng đấu">
+      <strong>VÒNG <span id="round-number">0</span></strong>
+      <div><span id="tab-LOBBY">SẢNH CHỜ</span><span id="tab-COUNTDOWN">CHUẨN BỊ</span><span id="tab-BATTLE">GIAO TRANH</span><span id="tab-FINAL">CHUNG KẾT</span><span id="tab-RESULT">KẾT QUẢ</span></div>
+    </nav>
+    <div id="artwork-status" role="alert" hidden></div>
     <div class="alert-stack">
       <div id="zone-warning" hidden></div><div id="event-label" hidden></div><div id="bounty-banner" hidden></div>
-      <div id="boss-panel" hidden><div class="meter-label"><strong>BOSS</strong><span id="boss-hp"></span></div><progress id="boss-meter" value="0" max="100" aria-label="Máu boss"></progress></div>
+      <div id="revive-banner" role="status" aria-live="polite" hidden></div>
       <div id="notice" role="status" aria-live="polite" hidden><span class="gift-mark">&#10022;</span><div class="gift-copy"><div id="gift-thanks"></div><div id="gift-detail"></div></div></div>
     </div>
     <section id="lobby-screen" class="phase-screen">
       <h1 class="lobby-title">Comment <strong>'JOIN'</strong> để vào đấu trường!</h1>
       <div class="lobby-metrics"><span><strong id="lobby-count">0</strong> đã vào</span><span><strong id="lobby-clock">45</strong>s bắt đầu</span></div>
       <div class="avatar-window"><ul id="recent-viewers"></ul></div>
-      <section class="guide-band"><h2>LỆNH NHANH</h2><ul id="command-guide"></ul></section>
-      <section class="guide-band"><h2>QUÀ HỖ TRỢ</h2><ul id="gift-guide"></ul></section>
+      <section class="lobby-class-guide" aria-labelledby="lobby-class-heading">
+        <h2 id="lobby-class-heading">HIỂU CLASS · NẮM LỢI THẾ</h2>
+        <p id="lobby-mana-guide"></p>
+        <p id="lobby-raid-guide"></p>
+        <ul id="lobby-class-list"></ul>
+      </section>
     </section>
     <section id="countdown-screen" class="phase-screen" hidden><div id="countdown-number">5</div><div class="countdown-caption">ĐẤU TRƯỜNG SẴN SÀNG</div></section>
     <section id="battle-screen" class="phase-screen" hidden>
-      <div class="battle-stats"><div id="counts-label">0 còn sống</div><div id="energy-panel"><div class="meter-label"><span>&#9829; NĂNG LƯỢNG</span><span id="energy-value">0/100</span></div><progress id="energy-meter" value="0" max="100" aria-label="Năng lượng sự kiện"></progress></div></div>
       <footer class="battle-footer"><section><h2>TOP SÁT THƯƠNG</h2><ol id="damage-ranking"></ol></section><section><h2>DIỄN BIẾN</h2><ol id="kill-feed" aria-live="polite"></ol></section></footer>
     </section>
     <section id="result-screen" class="phase-screen" hidden>
-      <div class="champion"><p id="champion-heading">NHÀ VÔ ĐỊCH</p><div id="champion-avatar"></div><h1 id="champion-name">Hòa trận</h1><div class="champion-stats"><span><strong id="champion-kills">0</strong> hạ gục</span><span><strong id="champion-damage">0</strong> sát thương</span></div></div>
+      <div class="victory-confetti" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+      <div class="champion">
+        <div class="champion-trophy" aria-hidden="true">&#127942;</div>
+        <p id="champion-heading">NHÀ VÔ ĐỊCH</p>
+        <div id="champion-avatar"></div>
+        <h1 id="champion-name">Hòa trận</h1>
+        <p id="champion-title" class="champion-title"></p>
+        <div class="champion-stats"><span><strong id="champion-kills">0</strong> hạ gục</span><span><strong id="champion-damage">0</strong> sát thương</span></div>
+        <p id="champion-message" class="champion-message">Chiến thắng thuộc về người bền bỉ nhất!</p>
+      </div>
+      <ol id="victory-podium" class="victory-podium" aria-label="Vinh danh top 3"></ol>
       <section class="ranking-block"><h2>XẾP HẠNG VÁN · <span id="round-total">0</span> NGƯỜI</h2><ol id="round-ranking" class="ranking-list"></ol></section>
       <section class="ranking-block"><h2>BẢNG NGÀY</h2><ol id="daily-ranking" class="ranking-list"></ol><div id="daily-status">Đang tải bảng ngày…</div></section>
     </section>
+    <footer class="arena-guide">
+      <section class="guide-band"><h2>LỆNH NHANH <small>Nhập trong bình luận LIVE</small></h2><ul id="command-guide"></ul></section>
+      <section class="guide-band"><h2>CHỌN QUÀ TIKTOK</h2><ul id="gift-guide"></ul></section>
+      <section id="footer-battle-stats" class="battle-stats" aria-label="Thông tin trận đấu" hidden>
+        <div id="counts-label">0 còn sống</div>
+        <div id="energy-panel"><div class="meter-label"><span>&#9889; NĂNG LƯỢNG</span><span id="energy-value">0/100</span></div><progress id="energy-meter" value="0" max="100" aria-label="Năng lượng sự kiện"></progress></div>
+        <div class="gift-summary">&#127873; Quà trong ván <div><strong id="round-gifts">0</strong> &#128142;</div></div>
+        <div id="boss-panel" hidden><div class="meter-label"><strong id="boss-name">BOSS</strong><span id="boss-hp"></span></div><div class="boss-bars"><span id="boss-skill"></span><progress id="boss-meter" value="0" max="100" aria-label="Máu boss"></progress><progress id="boss-mana" value="0" max="100" aria-label="Mana boss"></progress></div></div>
+      </section>
+    </footer>
   </main>
   <script type="module" src="./main.js"></script>
 </body>

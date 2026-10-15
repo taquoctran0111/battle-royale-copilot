@@ -11,7 +11,7 @@ export function createAllianceSystem({ bus, state, config }) {
   const nowMs = () => state.time * 1000;
   const keyOf = (aId, bId) => [String(aId), String(bId)].sort().join('|');
   const canAlly = () => !disposed && ['LOBBY', 'COUNTDOWN', 'BATTLE'].includes(state.phase);
-  const canFight = () => !disposed && (state.phase === 'BATTLE' || state.phase === 'FINAL');
+  const canFight = () => !disposed && state.mode !== 'raid' && (state.phase === 'BATTLE' || state.phase === 'FINAL');
 
   function clearInvitations(playerId) {
     invitations.delete(playerId);
@@ -152,7 +152,7 @@ export function createAllianceSystem({ bus, state, config }) {
       if (invitation.expiresAt <= nowMs() || !validPair(player, target)) invitations.delete(id);
     }
     // FINAL's last allied pair must duel; the configured reason is explicit.
-    if (state.phase === 'FINAL') {
+    if (state.phase === 'FINAL' && state.mode !== 'raid') {
       const alive = getAlive(state);
       if (alive.length === 2 && alive[0].allianceId === alive[1].id && alive[1].allianceId === alive[0].id) {
         clearPair(alive[0].id, alive[1].id, config.alliance.finalBreakReason);

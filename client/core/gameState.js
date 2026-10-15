@@ -16,6 +16,9 @@ export function createState(config) {
     drops: [],
     traps: [],
     boss: null,
+    mode: 'battle',
+    raidOutcome: null,
+    nextRoundReward: null,
     alliances: new Map(),
     giftTargets: new Map(),
     energy: { value: 0, max: config.events.energy.max },
@@ -31,11 +34,13 @@ export function createState(config) {
 function resetPlayerForRound(p) {
   Object.assign(p, {
     vx: 0, vy: 0,
+    mana: 0,
+    bossSlowUntil: 0, bossSlowMult: 1,
     shield: 0, weaponLevel: 0, buffs: [],
     status: 'alive',
     kills: 0, streak: 0, damageDealt: 0, giftValue: 0, placement: 0,
     targetId: null, intent: 'normal',
-    cooldowns: { attack: 0, dodge: 0, ally: 0, betray: 0 },
+    cooldowns: { dodge: 0, ally: 0, betray: 0 },
   });
 }
 
@@ -54,6 +59,9 @@ export function resetRound(state, { keepPlayers = false } = {}) {
   state.drops.length = 0;
   state.traps.length = 0;
   state.boss = null;
+  state.mode = 'battle';
+  state.raidOutcome = null;
+  state.nextRoundReward = null;
   state.alliances.clear();
   state.giftTargets.clear();
   state.energy.value = 0;
@@ -64,7 +72,7 @@ export function resetRound(state, { keepPlayers = false } = {}) {
     state.players.clear();
   } else {
     for (const [id, p] of state.players) {
-      if (p.isBot) state.players.delete(id);
+      if (p.isBot && p.bossSlayerRound !== state.roundId + 1) state.players.delete(id);
       else resetPlayerForRound(p);
     }
   }

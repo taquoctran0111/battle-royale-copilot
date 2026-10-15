@@ -62,7 +62,7 @@ function game(overrides = {}) {
   const resources = () => ({ listeners: [...eventCatalog].reduce((sum, type) => sum + bus.listenerCount(type), 0), particles: effects.particleCount, drops: state.drops.length, traps: state.traps.length, players: state.players.size });
   return { cfg, state, bus, mock, phases, errors, counts, effects, resources,
     tick(ticks = 1) { for (let index = 0; index < ticks; index += 1) { input.update(); systems.forEach((system) => system.update(1 / cfg.tickRate)); effects.update(1 / cfg.tickRate); } },
-    until(predicate, seconds = 250) { for (let tick = 0; tick < seconds * cfg.tickRate && !predicate(); tick += 1) this.tick(); assert.ok(predicate(), `Timed out in ${state.phase}`); },
+    until(predicate, seconds = Object.values(cfg.phases.durationSec).reduce((sum, duration) => sum + duration, 0) + 1) { for (let tick = 0; tick < seconds * cfg.tickRate && !predicate(); tick += 1) this.tick(); assert.ok(predicate(), `Timed out in ${state.phase}`); },
     dispose() { effects.dispose(); systems.reverse().forEach((system) => system.dispose()); input.dispose(); assert.deepEqual(errors, [], 'runtime payload contract'); bus.clear(); },
   };
 }
@@ -73,7 +73,8 @@ try {
   const store = createLeaderboardStore({ filePath: join(directory, 'leaderboard.json') });
   const bots = game();
   try {
-    bots.until(() => bots.state.roundId >= 6 && bots.state.phase === 'LOBBY', 1200);
+    const roundSeconds = Object.values(bots.cfg.phases.durationSec).reduce((sum, duration) => sum + duration, 0) + 1;
+    bots.until(() => bots.state.roundId >= 6 && bots.state.phase === 'LOBBY', roundSeconds * 5);
     assert.equal(bots.counts.get('round:ended'), 5);
     assert.deepEqual(bots.errors, []);
     console.info('[PASS] 5 bot-only rounds:', bots.phases.join(' -> '));
@@ -89,7 +90,7 @@ try {
   try {
     for (let index = 0; index < 50; index += 1) match.mock.send('live:join', { userId: `viewer-${index}`, nickname: `Viewer ${index}` });
     assert.equal(match.state.players.size, match.cfg.lobby.maxPlayers);
-    for (let index = 0; index < 1000; index += 1) match.mock.send('live:chat', { userId: `viewer-${index % 50}`, text: 'ĐÁNH' });
+    for (let index = 0; index < 1000; index += 1) match.mock.send('live:chat', { userId: `viewer-${index % 50}`, text: 'NÉ' });
     match.until(() => match.state.phase === 'BATTLE');
     let giver = getAlive(match.state)[0];
     const sendGift = (diamonds) => match.mock.send('live:gift', { userId: giver.id, nickname: giver.name, diamonds, giftName: `Gift ${diamonds}`, count: 1 });

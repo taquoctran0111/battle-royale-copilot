@@ -3,6 +3,17 @@ import { pick } from '../core/utils.js';
 
 const botSequences = new WeakMap();
 
+export function applyClassStats(player, config, roundId) {
+  const base = getClass(config, player.classId);
+  const rewarded = player.bossSlayerRound === roundId;
+  Object.assign(player, {
+    hp: base.hp * (rewarded ? config.bosses.reward.hpMult : 1),
+    maxHp: base.hp * (rewarded ? config.bosses.reward.hpMult : 1),
+    atk: base.atk * (rewarded ? config.bosses.reward.atkMult : 1),
+    def: base.def, speed: base.speed, range: base.range, attackInterval: base.attackInterval, mana: 0,
+  });
+}
+
 export function createPlayer({ id, name, avatar = '', isBot = false }, stateOrConfig, legacyConfig, classId) {
   const config = legacyConfig ?? stateOrConfig;
   const state = legacyConfig ? stateOrConfig : null;
@@ -15,10 +26,11 @@ export function createPlayer({ id, name, avatar = '', isBot = false }, stateOrCo
     x: cx, y: cy,
     vx: 0, vy: 0, facing: 0, prevX: cx, prevY: cy,
     hp: base.hp, maxHp: base.hp, atk: base.atk, def: base.def, speed: base.speed, range: base.range,
+    mana: 0, maxMana: config.skills.maxMana,
     attackInterval: base.attackInterval, status: 'alive', shield: 0, weaponLevel: 0, buffs: [],
     kills: 0, streak: 0, damageDealt: 0, giftValue: 0, placement: 0,
     allianceId: null, targetId: null, intent: 'normal',
-    cooldowns: { attack: 0, dodge: 0, ally: 0, betray: 0 },
+    cooldowns: { dodge: 0, ally: 0, betray: 0 },
   };
 }
 

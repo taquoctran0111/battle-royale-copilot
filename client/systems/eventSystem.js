@@ -1,5 +1,6 @@
 import { getAlive } from '../core/gameState.js';
 import { areAllied, clamp, distXY, randRange, uid } from '../core/utils.js';
+import { findOpenSpawn } from '../core/spawnPoint.js';
 
 export function createEventSystem({ bus, state, config }) {
   const off = [];
@@ -46,6 +47,7 @@ export function createEventSystem({ bus, state, config }) {
     const id = uid('trap');
     const trapConfig = { ...config.events.traps[kind], ...overrides };
     const trap = { id, ...point, kind, damage: trapConfig.damage, radius: trapConfig.radius, fuseAt: kind === 'bomb' ? nowMs() + trapConfig.fuseMs : Infinity };
+    if (trapConfig.visual === 'meteor') Object.assign(trap, { visual: 'meteor', spawnedAt: nowMs(), flightMs: config.events.traps.bomb.fuseMs });
     state.traps.push(trap);
     bus.emit('trap:spawned', { id, x: trap.x, y: trap.y, kind });
     return trap;
@@ -79,8 +81,23 @@ export function createEventSystem({ bus, state, config }) {
     bus.emit('energy:changed', { value: state.energy.value, max: state.energy.max });
   }
 
+  function spawnBoss(type, base) {
+    if (state.boss || bossSpawned) return;
+    const definition = config.bosses[type];
+    const point = findOpenSpawn(state, config, config.ui.bossRadius * (type === 'fusion' ? 1.95 : 1));
+    const hp = type === 'fusion' ? definition.hp + getAlive(state).length * definition.hpPerPlayer : base.hp * definition.hpMult;
+    state.boss = {
+      id: uid('boss'), type, ...point, hp, maxHp: hp,
+      atk: type === 'fusion' ? definition.atk : base.atk * definition.atkMult,
+      speed: type === 'fusion' ? definition.speed : base.speed * definition.speedMult,
+      mana: 0, maxMana: 100, casting: null,
+    };
+    bossSpawned = true;
+    bus.emit('boss:spawned', { id: state.boss.id, hp, maxHp: hp });
+  }
+
   function triggerRandomEvent(consumeEnergy = false) {
-    if (!active() || triggering) return false;
+    if (!active() || state.mode === 'raid' || triggering) return false;
     const event = chooseEvent();
     scheduleEvent();
     if (!event) return false;
@@ -90,18 +107,20 @@ export function createEventSystem({ bus, state, config }) {
         state.energy.value = config.events.energy.resetAfterTrigger;
         publishEnergy();
       }
-      if (event.type === 'boss') bossSpawned = true;
       bus.emit('event:triggered', { type: event.type });
       if (!active()) return true;
       if (event.type === 'bombRain' || event.type === 'meteor') {
         const count = event.type === 'bombRain' ? event.bombs : event.count;
         for (let index = 0; index < count; index += 1) {
-          spawnTrap('bomb', randomPoint(), { damage: event.damage, radius: event.radius });
+          const meteor = event.type === 'meteor';
+          spawnTrap('bomb', randomPoint(), {
+            damage: event.damage, radius: event.radius,
+            ...(meteor ? { visual: 'meteor', fuseMs: config.events.traps.bomb.fuseMs + index * Math.max(0, event.durationSec * 1000 - config.events.traps.bomb.fuseMs) / Math.max(1, count - 1) } : {}),
+          });
         }
       } else if (event.type === 'boss') {
-        const boss = { id: uid('boss'), x: state.zone.cx, y: state.zone.cy, hp: event.hp, maxHp: event.hp, atk: event.atk, speed: event.speed };
-        state.boss = boss;
-        bus.emit('boss:spawned', { id: boss.id, hp: boss.hp, maxHp: boss.maxHp });
+        const order = config.bosses.minorOrder;
+        spawnBoss(order[Math.floor(Math.random() * order.length)], event);
       }
       return true;
     } finally {
@@ -114,6 +133,7 @@ export function createEventSystem({ bus, state, config }) {
       const trap = state.traps[index];
       const victims = getAlive(state).filter((player) => distXY(player.x, player.y, trap.x, trap.y) <= trap.radius);
       const fuseExpired = trap.kind === 'bomb' && nowMs() >= trap.fuseAt;
+      if (trap.visual === 'meteor' && !fuseExpired) continue;
       if (!victims.length && !fuseExpired) continue;
       state.traps.splice(index, 1);
       bus.emit('trap:triggered', { id: trap.id, x: trap.x, y: trap.y, victims: victims.map((player) => player.id) });
@@ -136,13 +156,13 @@ export function createEventSystem({ bus, state, config }) {
     if (!Number.isFinite(value) || value <= 0) return;
     state.energy.value = Math.min(state.energy.max, state.energy.value + value);
     publishEnergy();
-    if (state.energy.value >= config.events.energy.triggerThreshold && active()) {
+    if (state.energy.value >= config.events.energy.triggerThreshold && active() && state.mode !== 'raid') {
       triggerRandomEvent(true);
     }
   }));
   off.push(bus.on('boss:spawned', () => { if (active()) bossSpawned = true; }));
   off.push(bus.on('boss:defeated', (payload) => {
-    if (!active() || !bossSpawned || bossRewarded || !Array.isArray(payload?.topDamagers)) return;
+    if (!active() || state.mode === 'raid' || !bossSpawned || bossRewarded || !Array.isArray(payload?.topDamagers)) return;
     bossRewarded = true;
     const rewardPercent = config.events.list.find((event) => event.type === 'boss')?.rewardHealPercent ?? config.events.bossRewardHealPercent;
     const winners = payload.topDamagers.slice().sort((a, b) => b.damage - a.damage).slice(0, config.events.bossRewardWinners);
@@ -158,6 +178,10 @@ export function createEventSystem({ bus, state, config }) {
     const source = state.players.get(String(payload?.byId));
     if (!source) return;
     const ultimate = config.gifts.tiers.find((tier) => tier.tier === 4).ultimate;
+    if (state.mode === 'raid') {
+      if (state.boss) bus.emit('damage:request', { targetId: state.boss.id, amount: ultimate.damage, sourceId: source.id, cause: 'ultimate' });
+      return;
+    }
     for (const target of getAlive(state)) {
       if (target.id === source.id || areAllied(source, target)) continue;
       bus.emit('damage:request', { targetId: target.id, amount: ultimate.damage, sourceId: source.id, cause: 'ultimate' });
@@ -165,6 +189,7 @@ export function createEventSystem({ bus, state, config }) {
   }));
   off.push(bus.on('round:phase', (payload) => {
     if (payload?.phase === 'BATTLE') {
+      if (state.mode === 'raid') spawnBoss('fusion');
       scheduleEvent();
       nextTrapAt = state.time + randRange(...config.events.trapSpawnSec);
       nextDropAt = state.time + randRange(...config.events.dropSpawnSec);
@@ -184,11 +209,11 @@ export function createEventSystem({ bus, state, config }) {
 
   function update(dt) {
     if (!active() || !Number.isFinite(dt) || dt <= 0) return;
-    if (state.energy.value >= config.events.energy.triggerThreshold) {
+    if (state.energy.value >= config.events.energy.triggerThreshold && state.mode !== 'raid') {
       triggerRandomEvent(true);
     }
     if (state.time >= nextEventAt) triggerRandomEvent();
-    if (state.time >= nextTrapAt) {
+    if (state.mode !== 'raid' && state.time >= nextTrapAt) {
       spawnTrap(Math.random() < config.events.spikeChance ? 'spike' : 'bomb', hotspot());
       nextTrapAt = state.time + randRange(...config.events.trapSpawnSec);
     }

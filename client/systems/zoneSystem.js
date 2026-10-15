@@ -64,7 +64,7 @@ export function createZoneSystem({ bus, state, config }) {
   }));
 
   function update(dt) {
-    if (disposed || battleStartedAt === null || !active() || !Number.isFinite(dt) || dt <= 0) return;
+    if (disposed || state.mode === 'raid' || battleStartedAt === null || !active() || !Number.isFinite(dt) || dt <= 0) return;
     const elapsed = state.time - battleStartedAt;
     const stages = config.zone.stages;
     const duration = config.phases.durationSec.BATTLE + (state.phase === 'FINAL' ? config.phases.durationSec.FINAL : 0);

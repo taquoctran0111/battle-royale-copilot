@@ -37,6 +37,7 @@ import { createLeaderboardStore } from '../server/leaderboardStore.js';
 function testConfig() {
   const value = structuredClone(config);
   value.phases.durationSec = { LOBBY: 0.1, COUNTDOWN: 0.05, BATTLE: 0.2, FINAL: 0.1, RESULT: 0.05 };
+  value.bosses.raidDurationSec = 0.3;
   value.phases.finalThresholdAlive = 1;
   value.lobby = { minPlayers: 1, botFillTo: 3, maxPlayers: 50 };
   value.zone.initialRadius = 10000;
@@ -144,7 +145,9 @@ test('main clock: long suspension keeps phase deadline and zone warning ahead wi
 
 test('hud: phases, bounded priority popups, event feed, boss and daily leaderboard are read-only', async () => {
   class Element {
-    constructor() { this.children = []; this.dataset = {}; this.style = { setProperty() {} }; this._text = ''; this.hidden = false; }
+    constructor() { this.children = []; this.dataset = {}; this.style = { setProperty() {} }; this._text = ''; this.hidden = false; this.attributes = new Map(); }
+    setAttribute(key, value) { this.attributes.set(key, String(value)); }
+    getAttribute(key) { return this.attributes.get(key); }
     get textContent() { return this._text + this.children.map((child) => child.textContent).join(''); }
     set textContent(value) { this._text = String(value); this.children = []; }
     appendChild(child) { this.children.push(child); return child; }
@@ -153,7 +156,7 @@ test('hud: phases, bounded priority popups, event feed, boss and daily leaderboa
   }
   const nodes = new Map();
   const listeners = new Map();
-  const doc = { createElement: () => new Element(), defaultView: { innerWidth: 390, innerHeight: 844, addEventListener(type, listener) { listeners.set(type, listener); }, removeEventListener(type) { listeners.delete(type); } } };
+  const doc = { createElement: () => new Element(), createElementNS: () => new Element(), defaultView: { innerWidth: 390, innerHeight: 844, addEventListener(type, listener) { listeners.set(type, listener); }, removeEventListener(type) { listeners.delete(type); } } };
   const root = new Element(); root.ownerDocument = doc;
   root.querySelector = (selector) => { if (!nodes.has(selector)) nodes.set(selector, new Element()); return nodes.get(selector); };
   const cfg = testConfig();
@@ -168,7 +171,29 @@ test('hud: phases, bounded priority popups, event feed, boss and daily leaderboa
   const before = structuredClone(state);
   const hud = createHud({ root, bus, state, config: cfg, now: () => time, serverUrl: 'http://localhost:3102', fetchImpl: async (url) => { assert.equal(url, 'http://localhost:3102/api/leaderboard'); return { ok: true, json: async () => [{ playerId: first.id, name: 'Alpha', wins: 1, kills: 4, damage: 500 }] }; } });
   assert.equal(root.dataset.phase, 'LOBBY');
+  assert.equal(nodes.get('#tab-LOBBY').dataset.active, 'true');
+  assert.equal(nodes.get('#tab-BATTLE').dataset.active, 'false');
+  assert.equal(nodes.get('#round-number').textContent, '1');
+  assert.equal(nodes.get('#round-gifts').textContent, '0');
+  assert.equal(nodes.get('#footer-battle-stats').hidden, true);
+  assert.equal(nodes.has('#map-players'), false);
+  assert.equal(nodes.has('#map-zone'), false);
+  assert.equal(readFileSync(new URL('../client/index.html', import.meta.url), 'utf8').includes('minimap-panel'), false);
+  assert.equal(nodes.has('#skill-guide'), false);
+  assert.equal(readFileSync(new URL('../client/index.html', import.meta.url), 'utf8').includes('skill-guide'), false);
   assert.equal(nodes.get('#command-guide').children.length, 6);
+  assert.ok(nodes.get('#command-guide').textContent.includes('JOIN [class]'));
+  const classCards = nodes.get('#lobby-class-list').children;
+  assert.equal(classCards.length, cfg.classOrder.length);
+  for (const [index, id] of cfg.classOrder.entries()) {
+    assert.ok(classCards[index].textContent.includes(cfg.classes[id].name));
+    assert.ok(classCards[index].textContent.includes(`${cfg.classes[id].hp} HP`));
+    assert.ok(classCards[index].textContent.includes(cfg.skills[id].name));
+  }
+  assert.ok(classCards[1].textContent.includes(`${cfg.skills.archer.shots} phát`));
+  assert.ok(classCards[3].textContent.includes(`${cfg.skills.tank.shield} khiên`));
+  assert.ok(nodes.get('#lobby-mana-guide').textContent.includes(`${cfg.skills.fillSec}s`));
+  assert.equal(nodes.get('#command-guide').textContent.includes('ĐÁNH'), false);
   assert.equal(nodes.get('#gift-guide').children.length, 4);
   for (let index = 0; index < 30; index += 1) bus.emit('gift:effect', { fromId: first.id, toId: first.id, tier: 1, giftName: `Rose ${index}`, diamonds: 1, count: 1 });
   hud.update();
@@ -197,21 +222,75 @@ test('hud: phases, bounded priority popups, event feed, boss and daily leaderboa
   assert.equal(nodes.get('#kill-feed').children.length, 5);
   assert.equal(nodes.get('#energy-meter').value, 65);
   assert.equal(nodes.get('#boss-meter').value, 500);
+  assert.equal(nodes.get('#footer-battle-stats').hidden, false);
+  assert.equal(nodes.get('#boss-panel').hidden, false);
+  assert.equal(nodes.get('#boss-hp').textContent, '500/1000');
+  const html = readFileSync(new URL('../client/index.html', import.meta.url), 'utf8');
+  const footer = html.slice(html.indexOf('<footer class="arena-guide">'));
+  for (const id of ['counts-label', 'energy-meter', 'energy-value', 'round-gifts', 'boss-panel', 'boss-hp', 'boss-meter']) {
+    assert.ok(footer.includes(`id="${id}"`), `${id} belongs to the bottom footer`);
+    assert.equal(html.split(`id="${id}"`).length - 1, 1, `${id} is not duplicated`);
+  }
+  assert.ok(footer.indexOf('id="footer-battle-stats"') > footer.indexOf('id="gift-guide"'));
   assert.equal(nodes.get('#bounty-banner').hidden, false);
   assert.equal(nodes.get('#zone-warning').hidden, false);
+  assert.equal(nodes.get('#revive-banner').hidden, false);
+  assert.match(nodes.get('#revive-banner').textContent, /HỒI SINH · Beta · Quà Tier 4/);
   assert.equal(nodes.get('#countdown-number').textContent, 'CHIẾN!');
+  state.phase = 'FINAL';
+  bus.emit('round:phase', { phase: state.phase });
+  bus.emit('boss:damaged', { hp: 250, maxHp: 1000, byId: first.id });
+  hud.update();
+  assert.equal(nodes.get('#footer-battle-stats').hidden, false);
+  assert.equal(nodes.get('#counts-label').textContent, '2 còn sống · ván 1');
+  assert.equal(nodes.get('#boss-meter').value, 250);
+  assert.equal(nodes.get('#boss-hp').textContent, '250/1000');
+  assert.equal(nodes.get('#energy-value').textContent, '65/100');
   state.phase = 'RESULT'; bus.emit('round:phase', { phase: state.phase });
   bus.emit('round:ended', { roundId: 1, winnerId: first.id, ranking: [{ playerId: first.id, name: first.name, kills: 4, damage: 500, placement: 1 }, { playerId: second.id, name: second.name, kills: 1, damage: 100, placement: 2 }] });
   hud.update();
   await new Promise((resolve) => setImmediate(resolve));
   assert.equal(nodes.get('#result-screen').hidden, false);
+  assert.equal(nodes.get('#footer-battle-stats').hidden, true);
+  assert.equal(nodes.get('#boss-panel').hidden, true);
+  assert.equal(nodes.get('#revive-banner').hidden, true);
   assert.equal(nodes.get('#champion-name').textContent, first.name);
+  assert.equal(nodes.get('#result-screen').dataset.winner, 'true');
+  assert.equal(nodes.get('#champion-title').textContent, cfg.classes[first.classId].name);
+  assert.equal(nodes.get('#victory-podium').children.length, 2);
+  assert.ok(nodes.get('#victory-podium').children[0].textContent.includes(first.name));
+  assert.equal(nodes.get('#victory-podium').hidden, false);
   assert.equal(nodes.get('#round-ranking').children.length, 2);
   assert.equal(nodes.get('#daily-ranking').children.length, 1);
   bus.emit('round:ended', { roundId: 1, winnerId: null, ranking: [] });
   hud.update();
   assert.equal(nodes.get('#champion-name').textContent, 'Hòa trận');
   assert.equal(nodes.get('#champion-heading').textContent, 'KHÔNG CÓ NHÀ VÔ ĐỊCH');
+  assert.equal(nodes.get('#result-screen').dataset.winner, 'false');
+  assert.equal(nodes.get('#victory-podium').hidden, true);
+  assert.equal(nodes.get('#victory-podium').children.length, 0);
+  state.mode = 'raid';
+  state.phase = 'BATTLE';
+  state.boss = { id: 'fusion-hud', type: 'fusion', hp: 6000, maxHp: 10000, mana: 75, maxMana: 100, casting: { hitsAt: 1 } };
+  hud.update();
+  assert.equal(nodes.get('#boss-name').textContent, cfg.bosses.fusion.name);
+  assert.equal(nodes.get('#boss-mana').value, 75);
+  assert.ok(nodes.get('#boss-skill').textContent.includes(cfg.bosses.fusion.skill.name));
+  assert.equal(nodes.get('#event-label').hidden, false);
+  assert.ok(nodes.get('#event-label').textContent.includes('KHÓA SÁT THƯƠNG ĐỒNG ĐỘI'));
+  const raidBefore = structuredClone(state);
+  state.phase = 'RESULT';
+  bus.emit('round:ended', { roundId: 3, winnerId: first.id, ranking: [{ playerId: first.id, name: first.name, kills: 0, damage: 100, placement: 1 }] });
+  hud.update();
+  assert.equal(nodes.get('#champion-heading').textContent, 'ANH HÙNG DIỆT BOSS');
+  assert.ok(nodes.get('#champion-message').textContent.includes('+25% HP'));
+  assert.ok(nodes.get('#champion-message').textContent.includes('+20% ATK'));
+  bus.emit('round:ended', { roundId: 3, winnerId: null, ranking: [] });
+  hud.update();
+  assert.equal(nodes.get('#champion-heading').textContent, 'ĐỘI THẢO PHẠT THẤT BẠI');
+  assert.equal(nodes.get('#result-screen').dataset.winner, 'false');
+  assert.equal(nodes.get('#victory-podium').hidden, true);
+  assert.deepEqual(state, { ...raidBefore, phase: 'RESULT' });
   state.arena.w = 720; state.arena.h = 1280;
   hud.resize();
   assert.equal(root.style.width, `${cfg.ui.hud.designWidth}px`);
@@ -649,7 +728,7 @@ test('gift effects: shield layers expire independently after damage and all stat
     apply('weapon', 1000, 2000);
   }
   for (const type of ['speed', 'rage', 'weapon']) assert.equal(player.buffs.filter((buff) => buff.type === type).length, game.cfg.gifts.buffCaps.perType);
-  const stats = getEffectiveStats(player, game.cfg, 1000, { attackBoost: true, dodging: true });
+  const stats = getEffectiveStats(player, game.cfg, 1000, { dodging: true });
   assert.equal(stats.atk, player.atk * (1 + game.cfg.gifts.buffCaps.attackBonus));
   assert.equal(stats.speed, player.speed * game.cfg.gifts.buffCaps.speedMult);
   assert.equal(player.atk, game.cfg.classes[player.classId].atk);
@@ -1182,10 +1261,10 @@ test('events: boss requires four alive, spawns once per round and rewards top da
   bus.emit('damage:request', { targetId: second.id, amount: 80, cause: 'zone' });
   const bossId = state.boss.id;
   bus.emit('damage:request', { targetId: bossId, amount: 70, sourceId: top.id, cause: 'attack' });
-  bus.emit('damage:request', { targetId: bossId, amount: 30, sourceId: second.id, cause: 'attack' });
+  bus.emit('damage:request', { targetId: bossId, amount: state.boss.hp, sourceId: second.id, cause: 'attack' });
   assert.equal(state.boss, null);
-  assert.equal(top.hp, 100);
-  assert.equal(second.hp, 40);
+  assert.equal(top.hp, Math.min(top.maxHp, top.maxHp - 80 + top.maxHp * cfg.events.bossRewardHealPercent));
+  assert.equal(second.hp, second.maxHp - 80);
   assert.equal(rewards, 1);
   assert.ok(top.buffs.some((buff) => buff.type === 'rage'));
   bus.emit('boss:defeated', { topDamagers: [{ playerId: top.id, damage: 70 }] });
@@ -1235,10 +1314,18 @@ test('events: bomb rain and meteors spawn configured bombs, explode once and sto
       assert.equal(triggers.length, 0);
       state.phase = 'FINAL';
       events.update(1 / cfg.tickRate);
+      if (type === 'meteor') {
+        assert.equal(triggers.length, 0);
+        assert.equal(target.hp, target.maxHp);
+        assert.ok(state.traps.every((trap) => trap.visual === 'meteor'));
+        assert.ok(state.traps.at(-1).fuseAt > bomb.fuseAt);
+        state.time = bomb.fuseAt / 1000;
+        events.update(1 / cfg.tickRate);
+      }
       assert.ok(triggers.length >= 1);
       assert.ok(target.hp < target.maxHp);
       assert.ok(damage.every((request) => request.cause === 'bomb'));
-      state.time = cfg.events.traps.bomb.fuseMs / 1000;
+      state.time = type === 'meteor' ? event.durationSec : cfg.events.traps.bomb.fuseMs / 1000;
       events.update(state.time);
       assert.equal(state.traps.length, 0);
       assert.equal(triggers.length, event.bombs ?? event.count);
@@ -1406,6 +1493,7 @@ test('movement: ranged spacing, nearby supply priority, nearest boss and betraya
     enemy.x = source.x + source.range * 0.7;
     movement.update(1 / cfg.tickRate);
     assert.equal(source.vx, 0);
+    assert.ok(Math.abs(source.vy) > 0, 'strafe instead of idling inside attack range');
     enemy.x = source.x + source.range * 1.2;
     movement.update(1 / cfg.tickRate);
     assert.ok(source.vx > 0);
@@ -1499,7 +1587,7 @@ test('combat: exact shield absorption, HP clamps, nested damage and revive lifet
   assert.equal(bus.listenerCount('damage:request'), 0);
 });
 
-test('combat: additive buffs, attack speed boost, expiry, crit and friendly fire', () => {
+test('combat: automatic attacks, additive buffs, timing, crit and friendly fire', () => {
   const cfg = testConfig();
   cfg.combat.critChance = 0;
   const state = createState(cfg);
@@ -1516,23 +1604,21 @@ test('combat: additive buffs, attack speed boost, expiry, crit and friendly fire
   bus.on('player:damaged', (event) => { if (event.targetId === target.id) hits.push(event); });
   combat.update(1 / cfg.tickRate);
   assert.equal(hits[0].amount, 25);
-  bus.emit('cmd:attack', { playerId: source.id });
-  const cooldown = source.cooldowns.attack;
-  bus.emit('cmd:attack', { playerId: source.id });
-  assert.equal(source.cooldowns.attack, cooldown);
-  state.time = source.attackInterval / cfg.combat.attackBoostSpeedMult / 1000 - 0.001;
+  assert.equal(bus.listenerCount('cmd:attack'), 0);
+  for (const text of ['ĐÁNH', 'attack', 'tấn công']) bus.emit('live:chat', { userId: source.id, text });
+  state.time = source.attackInterval / 1000 - 0.001;
   combat.update(1 / cfg.tickRate);
   assert.equal(hits.length, 1);
   state.time += 0.001;
   combat.update(1 / cfg.tickRate);
-  assert.equal(hits[1].amount, 43);
+  assert.equal(hits[1].amount, 25);
   source.weaponLevel = 2;
   source.buffs.push({ type: 'rage', value: 1.5, until: 10000 }, { type: 'weapon', value: 1.2, until: 10000 });
-  state.time += source.attackInterval / cfg.combat.attackBoostSpeedMult / 1000;
+  state.time += source.attackInterval / 1000;
   combat.update(1 / cfg.tickRate);
-  assert.ok(Math.abs(hits[2].amount - (30 * (1 + 0.24 + 0.5 + 0.2 + 0.6) - 5)) < 1e-8);
+  assert.ok(Math.abs(hits[2].amount - (30 * (1 + 0.24 + 0.5 + 0.2) - 5)) < 1e-8);
   target.x = 900;
-  state.time = cfg.combat.attackBoostDurationMs / 1000;
+  state.time = 3;
   combat.update(1 / cfg.tickRate);
   assert.equal(source.intent, 'normal');
   assert.equal(hits.length, 3);
@@ -1590,7 +1676,7 @@ test('combat: boss nearest targeting, single boss attacks and capped damage cred
   combat.dispose();
 });
 
-test('combat: headless 20 bots finish in 60-120 seconds at 30 Hz without duplicate deaths', () => {
+test('combat: doubled HP and extended zone keep seeded 20-bot battles over two minutes within five-minute deadline', () => {
   const originalRandom = Math.random;
   try {
     for (const seed of [1, 17, 42]) {
@@ -1602,6 +1688,7 @@ test('combat: headless 20 bots finish in 60-120 seconds at 30 Hz without duplica
       const bus = createEventBus(cfg);
       const systems = [
         createRoundManager({ bus, state, config: cfg }),
+        createGiftEffectSystem({ bus, state, config: cfg }),
         createAllianceSystem({ bus, state, config: cfg }),
         createZoneSystem({ bus, state, config: cfg }),
         createMovementSystem({ bus, state, config: cfg }),
@@ -1614,17 +1701,24 @@ test('combat: headless 20 bots finish in 60-120 seconds at 30 Hz without duplica
       bus.on('round:phase', ({ phase }) => { if (phase === 'BATTLE') battleStart = state.time; });
       bus.on('round:ended', (event) => { result = event; endedAt = state.time; });
       bus.on('player:killed', ({ victimId }) => kills.set(victimId, (kills.get(victimId) ?? 0) + 1));
-      for (let tick = 0; tick < 121 * cfg.tickRate && !result; tick += 1) {
+      const deadline = cfg.phases.durationSec.BATTLE + cfg.phases.durationSec.FINAL;
+      for (let tick = 0; tick < (deadline + 1) * cfg.tickRate && !result; tick += 1) {
         for (const system of systems) system.update(1 / cfg.tickRate);
         for (const player of state.players.values()) assert.ok(player.hp >= 0 && player.hp <= player.maxHp);
       }
       const duration = endedAt - battleStart;
       console.info(`[20 bots seed=${seed}] battle=${duration.toFixed(2)}s, kills=${kills.size}, alive=${[...state.players.values()].filter((player) => player.status === 'alive').length}`);
-      assert.ok(result, `seed ${seed}: no result within 120s`);
-      assert.ok(duration >= 60 && duration <= 120, `seed ${seed}: battle ${duration.toFixed(2)}s`);
+      assert.ok(result, `seed ${seed}: no result within ${deadline}s`);
+      assert.ok(duration > 120 && duration <= deadline + 1 / cfg.tickRate, `seed ${seed}: battle ${duration.toFixed(2)}s`);
       assert.equal(result.ranking.length, 20);
       assert.ok(result.winnerId);
-      assert.equal(kills.size, 19);
+      const survivors = [...state.players.values()].filter((player) => player.status === 'alive');
+      assert.equal(kills.size, 20 - survivors.length);
+      if (survivors.length > 1) {
+        assert.ok(duration >= deadline - 1 / cfg.tickRate, 'multiple survivors are allowed only at the deadline');
+        const highestHp = Math.max(...survivors.map((player) => player.hp));
+        assert.equal(state.players.get(result.winnerId).hp, highestHp);
+      } else assert.equal(kills.size, 19);
       assert.ok([...kills.values()].every((count) => count === 1));
       systems.reverse().forEach((system) => system.dispose());
     }
@@ -1650,8 +1744,8 @@ test('core: chuẩn hóa, tìm người chơi và EventBus không chặn listene
 });
 
 test('commandParser: alias có dấu, emoji, @name và chỉ khớp đầu comment', () => {
-  assert.deepEqual(parse('  ĐÁNH!!! ', config), { cmd: 'attack', arg: '' });
-  assert.deepEqual(parse('TAN CONG', config), { cmd: 'attack', arg: '' });
+  for (const text of ['  ĐÁNH!!! ', 'TAN CONG', 'attack']) assert.equal(parse(text, config), null);
+  assert.deepEqual(parse('NÉ!!!', config), { cmd: 'dodge', arg: '' });
   assert.deepEqual(parse('HỢP TÁC @Ngọc Lan 🔥', config), { cmd: 'ally', arg: 'ngoc lan' });
   assert.deepEqual(parse('cứu @Đức Huy', config), { cmd: 'giftTarget', arg: 'duc huy' });
   assert.equal(parse('Mọi người hãy đánh', config), null);
@@ -1662,19 +1756,19 @@ test('inputRouter: cooldown riêng và token bucket chặn comment flood', () =>
   const cfg = testConfig();
   cfg.input.tokenCapacity = 50;
   cfg.input.tokenRefillPerSec = 0;
-  cfg.input.commandCooldownMs.attack = 1000;
+  cfg.input.commandCooldownMs.dodge = 1000;
   const state = createState(cfg);
   const bus = createEventBus(cfg);
   const player = { id: 'cooldown-user', name: 'Cooldown', status: 'alive', cooldowns: { attack: 0, dodge: 0, ally: 0, betray: 0 } };
   state.players.set(player.id, player);
   const router = createInputRouter({ bus, state, config: cfg });
   let attacks = 0;
-  bus.on('cmd:attack', () => { attacks += 1; });
-  bus.emit('live:chat', { userId: player.id, text: 'đánh' });
-  bus.emit('live:chat', { userId: player.id, text: 'ATTACK' });
+  bus.on('cmd:dodge', () => { attacks += 1; });
+  bus.emit('live:chat', { userId: player.id, text: 'né' });
+  bus.emit('live:chat', { userId: player.id, text: 'DODGE' });
   assert.equal(attacks, 1);
   state.time = 1;
-  bus.emit('live:chat', { userId: player.id, text: 'tấn công' });
+  bus.emit('live:chat', { userId: player.id, text: 'né' });
   assert.equal(attacks, 2);
   router.dispose();
   bus.clear();
@@ -1688,8 +1782,8 @@ test('inputRouter: cooldown riêng và token bucket chặn comment flood', () =>
   }
   const floodRouter = createInputRouter({ bus: floodBus, state: floodState, config: cfg });
   let accepted = 0;
-  floodBus.on('cmd:attack', () => { accepted += 1; });
-  for (let index = 0; index < 50; index += 1) floodBus.emit('live:chat', { userId: `flood-${index}`, text: 'đánh' });
+  floodBus.on('cmd:dodge', () => { accepted += 1; });
+  for (let index = 0; index < 50; index += 1) floodBus.emit('live:chat', { userId: `flood-${index}`, text: 'né' });
   assert.equal(accepted, 7);
   floodRouter.dispose();
   floodBus.clear();
@@ -1827,7 +1921,7 @@ test('player factory: public API, balanced classes and unique Vietnamese bots', 
     for (const key of ['atk', 'def', 'speed', 'range', 'attackInterval']) assert.equal(player[key], base[key]);
     assert.equal(player.status, 'alive');
     assert.equal(player.allianceId, null);
-    assert.deepEqual(player.cooldowns, { attack: 0, dodge: 0, ally: 0, betray: 0 });
+    assert.deepEqual(player.cooldowns, { dodge: 0, ally: 0, betray: 0 });
     assert.deepEqual(player.buffs, []);
   }
   const first = createBot(cfg);
@@ -2213,7 +2307,7 @@ test('wsClient: tự kết nối lại sau khi socket bị ngắt', async () => 
 test('mock stress: 50 người vào và spam comment không vượt maxPlayers', () => {
   const game = createGame();
   for (let index = 0; index < 50; index += 1) game.bus.emit('live:join', { userId: `u${index}`, nickname: `User ${index}` });
-  for (let index = 0; index < 1000; index += 1) game.bus.emit('live:chat', { userId: `u${index % 50}`, nickname: `User ${index % 50}`, text: 'đánh' });
+  for (let index = 0; index < 1000; index += 1) game.bus.emit('live:chat', { userId: `u${index % 50}`, nickname: `User ${index % 50}`, text: 'né' });
   assert.equal(game.state.players.size, game.cfg.lobby.maxPlayers);
   game.dispose();
 });

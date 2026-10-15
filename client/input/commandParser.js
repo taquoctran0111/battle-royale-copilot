@@ -14,7 +14,6 @@ export function parse(text, config) {
   const commands = config?.commands ?? config ?? {};
   const definitions = [
     { cmd: 'join', aliases: commands.join, hasArg: false },
-    { cmd: 'attack', aliases: commands.attack, hasArg: false },
     { cmd: 'dodge', aliases: commands.dodge, hasArg: false },
     { cmd: 'ally', aliases: commands.ally, hasArg: true },
     { cmd: 'betray', aliases: commands.betray, hasArg: false },
@@ -29,6 +28,11 @@ export function parse(text, config) {
   for (const { cmd, hasArg, keyword } of aliases) {
     if (normalized === keyword) return hasArg ? null : { cmd, arg: '' };
     if (!normalized.startsWith(`${keyword} `)) continue;
+    if (cmd === 'join') {
+      const choice = normalized.slice(keyword.length).trim();
+      const classId = config.classOrder?.find((id) => choice === clean(id) || choice === clean(config.classes[id].name));
+      return classId ? { cmd, arg: classId } : null;
+    }
     if (!hasArg) return null;
     const arg = normalized.slice(keyword.length).trim().replace(/^@+/, '').trim();
     return arg ? { cmd, arg } : null;

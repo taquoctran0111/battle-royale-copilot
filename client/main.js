@@ -46,7 +46,7 @@ const systems = [['roundManager', roundManager], ['giftEffectSystem', giftEffect
 const renderer = createRenderer({ canvas: document.querySelector('#arena'), bus, state, config });
 let leaderboardClient;
 const hud = createHud({ root: document.querySelector('#hud'), bus, state, config, serverUrl: backendUrl.href, fetchTop: (query) => leaderboardClient?.fetchTop(query) ?? Promise.resolve([]) });
-const audio = createAudio({ bus, button: document.querySelector('#audio-toggle'), volumeInput: document.querySelector('#audio-volume'), enabled: params.get('audio') === '1', config });
+const audio = createAudio({ bus, button: document.querySelector('#audio-toggle'), musicButton: document.querySelector('#music-toggle'), volumeInput: document.querySelector('#audio-volume'), enabled: params.get('audio') === '1', config });
 leaderboardClient = createLeaderboardClient({ bus, state, config, serverUrl: backendUrl.href });
 renderer.onFrame(() => { hud.update(); audio.update(); });
 

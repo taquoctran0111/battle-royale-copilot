@@ -1,6 +1,7 @@
 // client/net/wsClient.js — nhận { type, payload } từ server và bus.emit(type, payload).
 // Tự reconnect (backoff + jitter). ?local=1 => sinh sự kiện giả ngay trong trình duyệt.
 import { pick, randInt, randRange } from '../core/utils.js';
+import { createMockActions, mockJoinText } from './mockActions.js';
 
 export async function resolveBackendUrl({ location, config, fetchImpl = globalThis.fetch }) {
   const server = new URLSearchParams(location.search).get('server');
@@ -116,6 +117,7 @@ export function createWsClient({ bus, config, url, local } = {}) {
       avatarUrl: '', joined: false,
     }));
     let totalLikes = 0, joinIdx = 0;
+    const actions = createMockActions({ emit: safeEmit, getUsers: () => users.filter((user) => user.joined), config });
 
     setStatus(true, { roomId: 'local', force: true });
 
@@ -125,7 +127,7 @@ export function createWsClient({ bus, config, url, local } = {}) {
       const u = users[joinIdx++];
       u.joined = true;
       safeEmit('live:join', { userId: u.userId, uniqueId: u.uniqueId, nickname: u.nickname, avatarUrl: u.avatarUrl });
-      safeEmit('live:chat', { userId: u.userId, uniqueId: u.uniqueId, nickname: u.nickname, avatarUrl: u.avatarUrl, text: cmd.join[0] });
+      safeEmit('live:chat', { userId: u.userId, uniqueId: u.uniqueId, nickname: u.nickname, avatarUrl: u.avatarUrl, text: mockJoinText(joinIdx - 1, config) });
     }, L.joinIntervalMs));
 
     // Hành động ngẫu nhiên của người đã join
@@ -151,13 +153,13 @@ export function createWsClient({ bus, config, url, local } = {}) {
         safeEmit('live:share', { userId: u.userId, uniqueId: u.uniqueId, nickname: u.nickname });
       } else {
         const texts = [
-          pick(cmd.attack), pick(cmd.attack), pick(cmd.dodge),
-          `${pick(cmd.ally)} ${other.nickname}`, pick(cmd.betray),
+          pick(cmd.dodge),
           `${pick(cmd.rescue)} ${other.nickname}`, 'cố lên mọi người ơi',
         ];
         safeEmit('live:chat', { ...base, text: pick(texts) });
       }
     }, L.eventIntervalMs));
+    localTimers.push(setInterval(() => actions.update(), 1000));
   }
 
   // ---------- API ----------

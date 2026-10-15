@@ -37,6 +37,7 @@ export function createHud({ root, bus, state, config, serverUrl, fetchTop, fetch
   let energySnapshot = null;
   let zoneSnapshot = null;
   let bannerUntil = 0;
+  let reviveUntil = 0;
   let eventUntil = 0;
   let battleFlashUntil = 0;
   let refreshAt = 0;
@@ -79,8 +80,24 @@ export function createHud({ root, bus, state, config, serverUrl, fetchTop, fetch
     const label = doc.createElement('strong'); label.textContent = value.name; label.title = value.name;
     const score = doc.createElement('span'); score.className = 'rank-score';
     score.textContent = dailyRow ? `${Number(value.wins) || 0} thắng · ${Number(value.kills) || 0} hạ` : `${Number(value.kills) || 0} hạ · ${Math.round(Number(value.damage) || 0)}`;
-    row.append(place, label, score);
+    row.append(place);
+    if (!dailyRow || value.classId !== undefined) row.appendChild(avatar(state.players.get(String(value.playerId)) ?? value, 'avatar-ranking'));
+    row.append(label, score);
     return row;
+  }
+
+  function artIcon(file, box, fallback) {
+    if (!doc.createElementNS) {
+      const icon = doc.createElement('span'); icon.textContent = fallback; return icon;
+    }
+    const icon = doc.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    icon.setAttribute('viewBox', box);
+    icon.setAttribute('aria-hidden', 'true');
+    const image = doc.createElementNS('http://www.w3.org/2000/svg', 'image');
+    image.setAttribute('href', `./assets/${file}`);
+    image.setAttribute('width', '512'); image.setAttribute('height', '512');
+    icon.appendChild(image);
+    return icon;
   }
 
   function addFeed(message, type) {
@@ -143,8 +160,38 @@ export function createHud({ root, bus, state, config, serverUrl, fetchTop, fetch
   }
 
   const commands = Object.entries(ui.commandIcons).map(([key, icon]) => ({ icon, command: `${config.commands[key]?.[0]?.toUpperCase() ?? key.toUpperCase()}${key === 'ally' || key === 'rescue' ? ' [tên]' : ''}` }));
+  commands.splice(1, 0, { icon: ui.commandIcons.join, command: `${config.commands.join[0].toUpperCase()} [class]` });
   rows(node('command-guide'), commands, (value) => { const row = doc.createElement('li'); const icon = doc.createElement('span'); icon.textContent = value.icon; const label = doc.createElement('strong'); label.textContent = value.command; row.append(icon, label); return row; });
-  rows(node('gift-guide'), config.gifts.tiers.map((tier, index) => ({ icon: ui.giftIcons[index], range: Number.isFinite(tier.max) ? `${tier.min}–${tier.max}` : `${tier.min}+`, label: ui.giftLabels[index] })), (value) => { const row = doc.createElement('li'); const icon = doc.createElement('span'); icon.textContent = value.icon; const label = doc.createElement('strong'); label.textContent = `${value.range} 💎`; const description = doc.createElement('span'); description.textContent = value.label; row.append(icon, label, description); return row; });
+  const giftArt = [
+    ['asset-15.png', '178 218 86 86'], ['asset-15.png', '396 218 86 86'],
+    ['asset-15.png', '48 216 112 90'], ['asset-14.png', '265 205 100 100'],
+  ];
+  rows(node('gift-guide'), config.gifts.tiers.map((tier, index) => ({ icon: ui.giftIcons[index], art: giftArt[index], range: Number.isFinite(tier.max) ? `${tier.min}–${tier.max}` : `${tier.min}+`, label: ui.giftLabels[index] })), (value) => { const row = doc.createElement('li'); const icon = artIcon(...value.art, value.icon); const label = doc.createElement('strong'); label.textContent = `${value.range} 💎`; const description = doc.createElement('span'); description.textContent = value.label; row.append(icon, label, description); return row; });
+  const classRoles = {
+    swordsman: 'Cận chiến cân bằng, áp sát đối thủ.',
+    archer: 'Đánh xa, di chuyển nhanh để giữ khoảng cách.',
+    mage: 'Đòn đánh mạnh, HP thấp, thiên về sát thương diện rộng.',
+    tank: 'HP và phòng thủ cao, di chuyển chậm.',
+  };
+  const skillDescriptions = {
+    swordsman: (skill) => `Chém xoáy quanh mình, gây ${skill.damageMult} × ATK lên mỗi địch.`,
+    archer: (skill) => `Bắn ${skill.shots} phát vào một mục tiêu, mỗi phát ${skill.damageMult} × ATK.`,
+    mage: (skill) => `Gây nổ quanh mục tiêu, gây ${skill.damageMult} × ATK lên mỗi địch.`,
+    tank: (skill) => `Tạo ${skill.shield} khiên trong ${skill.durationMs / 1000}s và hồi ${Math.round(skill.healPercent * 100)}% HP tối đa.`,
+  };
+  text(node('lobby-mana-guide'), `Mana đầy sau ${config.skills.fillSec}s chiến đấu · Tự dùng skill khi có địch trong tầm.`);
+  text(node('lobby-raid-guide'), `Mỗi ván thứ ${config.bosses.raidEvery}: hợp sức diệt Boss Hợp Thể · Người kết liễu nhận +${Math.round((config.bosses.reward.hpMult - 1) * 100)}% HP, +${Math.round((config.bosses.reward.atkMult - 1) * 100)}% ATK ở ván sau.`);
+  rows(node('lobby-class-list'), config.classOrder.map((id) => ({ id, ...config.classes[id], skill: config.skills[id] })), (value) => {
+    const card = doc.createElement('li'); card.className = `class-card class-card-${value.id}`;
+    const heading = doc.createElement('h3'); heading.textContent = `${config.ui.classIcons[value.id]} ${value.name}`;
+    const role = doc.createElement('p'); role.className = 'class-role'; role.textContent = classRoles[value.id];
+    const stats = doc.createElement('span'); stats.className = 'class-base-stats'; stats.textContent = `${value.hp} HP · ${value.atk} ATK · ${value.def} DEF`;
+    const skillName = doc.createElement('strong'); skillName.className = 'class-skill-name'; skillName.textContent = value.skill.name;
+    const skill = doc.createElement('p'); skill.className = 'class-skill-description'; skill.textContent = skillDescriptions[value.id](value.skill);
+    const join = doc.createElement('span'); join.className = 'class-join-command'; join.textContent = `${config.commands.join[0].toUpperCase()} ${value.name}`;
+    card.append(heading, role, stats, skillName, skill, join);
+    return card;
+  });
   for (const player of [...state.players.values()].slice(-ui.recentAvatars)) recent.push({ id: player.id, name: player.name, avatar: player.avatar });
   connection.hidden = !ui.showConnection || new URLSearchParams(globalThis.location?.search ?? '').get('connection') === '0';
 
@@ -173,9 +220,28 @@ export function createHud({ root, bus, state, config, serverUrl, fetchTop, fetch
     rows(leaderboard, ranking, (row, index) => scoreRow(row, index));
     const winner = state.players.get(String(winnerId));
     const row = ranking.find((entry) => entry.playerId === winnerId);
+    result.dataset.winner = String(winnerId !== null);
     node('champion-avatar').replaceChildren(avatar(winner ?? row, 'avatar-champion'));
     text(node('champion-name'), winnerId ? winner?.name ?? row?.name ?? winnerId : 'Hòa trận');
     text(node('champion-heading'), winnerId ? 'NHÀ VÔ ĐỊCH' : 'KHÔNG CÓ NHÀ VÔ ĐỊCH');
+    text(node('champion-title'), config.classes[winner?.classId ?? row?.classId]?.name ?? '');
+    text(node('champion-message'), winnerId ? 'VINH QUANG GỌI TÊN BẠN · CHÚC MỪNG CHIẾN THẮNG!' : 'Một trận đấu kiên cường. Hẹn gặp lại ở vòng sau!');
+    if (state.mode === 'raid') {
+      text(node('champion-heading'), winnerId ? 'ANH HÙNG DIỆT BOSS' : 'ĐỘI THẢO PHẠT THẤT BẠI');
+      text(node('champion-name'), winnerId ? winner?.name ?? row?.name ?? winnerId : 'Boss Hợp Thể chiến thắng');
+      text(node('champion-message'), winnerId ?
+        `KẾT LIỄU BOSS HỢP THỂ · VÁN SAU +${Math.round((config.bosses.reward.hpMult - 1) * 100)}% HP, +${Math.round((config.bosses.reward.atkMult - 1) * 100)}% ATK` :
+        'Hết thời gian hoặc toàn đội gục ngã · Không trao buff. Hẹn phục thù ở lần triệu hồi sau!');
+    }
+    node('victory-podium').hidden = !winnerId;
+    rows(node('victory-podium'), winnerId ? ranking.slice(0, 3) : [], (entry, index) => {
+      const item = doc.createElement('li'); item.className = `podium-place podium-${index + 1}`;
+      const place = doc.createElement('span'); place.className = 'podium-medal'; place.textContent = `#${entry.placement ?? index + 1}`;
+      const label = doc.createElement('strong'); label.textContent = entry.name;
+      const stats = doc.createElement('small'); stats.textContent = `${entry.kills} hạ · ${Math.round(entry.damage)} sát thương`;
+      item.append(place, avatar(state.players.get(entry.playerId) ?? entry), label, stats);
+      return item;
+    });
     text(node('champion-kills'), row?.kills ?? winner?.kills ?? 0);
     text(node('champion-damage'), Math.round(row?.damage ?? winner?.damageDealt ?? 0));
     text(node('round-total'), ranking.length);
@@ -188,13 +254,17 @@ export function createHud({ root, bus, state, config, serverUrl, fetchTop, fetch
   listen('ally:betrayed', ({ betrayerId, victimId }) => addFeed(`${name(betrayerId)} phản bội ${name(victimId)}`, 'betray'));
   listen('bounty:set', ({ playerId }) => { text(bounty, `${config.bounty.title.toUpperCase()} · ${name(playerId)}`); bannerUntil = now() + ui.bannerDurationMs; });
   listen('bounty:claimed', ({ victimId, killerId }) => addFeed(`${name(killerId)} hạ Kẻ hủy diệt ${name(victimId)}`, 'bounty'));
-  listen('player:revived', ({ playerId }) => addFeed(`${name(playerId)} trở lại đấu trường`, 'revive'));
+  listen('player:revived', ({ playerId }) => {
+    addFeed(`${name(playerId)} được hồi sinh bởi quà Tier 4`, 'revive');
+    text(node('revive-banner'), `HỒI SINH · ${name(playerId)} · Quà Tier 4`);
+    reviveUntil = now() + ui.bannerDurationMs;
+  });
   listen('boss:spawned', (value) => { bossSnapshot = value; });
   listen('boss:damaged', (value) => { bossSnapshot = { ...bossSnapshot, ...value }; });
   listen('boss:defeated', () => { bossSnapshot = null; addFeed('Boss đã bị hạ', 'boss'); });
   listen('round:phase', ({ phase: nextPhase }) => {
     if (nextPhase === 'BATTLE') battleFlashUntil = now() + ui.battleFlashMs;
-    if (nextPhase === 'LOBBY') { popupQueue.length = 0; currentPopup = null; feedRows.length = 0; ranking = []; winnerId = null; zoneSnapshot = null; bossSnapshot = null; energySnapshot = null; bannerUntil = eventUntil = 0; }
+    if (nextPhase === 'LOBBY') { popupQueue.length = 0; currentPopup = null; feedRows.length = 0; ranking = []; winnerId = null; zoneSnapshot = null; bossSnapshot = null; energySnapshot = null; bannerUntil = eventUntil = reviveUntil = 0; }
     if (nextPhase !== 'RESULT') dailyController?.abort();
     refreshAt = 0;
   });
@@ -205,14 +275,21 @@ export function createHud({ root, bus, state, config, serverUrl, fetchTop, fetch
     const seconds = Math.max(0, Math.ceil((state.phaseEndsAt - time) / 1000));
     const active = state.phase === 'BATTLE' || state.phase === 'FINAL';
     if (root.dataset.phase !== state.phase) root.dataset.phase = state.phase;
-    text(phase, config.ui.phaseNames[state.phase] ?? state.phase);
+    text(phase, state.mode === 'raid' ? `THẢO PHẠT · ${config.ui.phaseNames[state.phase] ?? state.phase}` : config.ui.phaseNames[state.phase] ?? state.phase);
     text(node('phase-clock'), `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, '0')}`);
     text(counts, `${getAlive(state).length} còn sống · ván ${state.roundId}`);
+    text(node('round-number'), state.roundId);
+    for (const step of Object.keys(config.ui.phaseNames)) {
+      const tab = node(`tab-${step}`);
+      const selected = String(step === state.phase);
+      if (tab.dataset.active !== selected) tab.dataset.active = selected;
+    }
+    text(node('round-gifts'), [...state.players.values()].reduce((total, player) => total + player.giftValue, 0).toLocaleString('vi-VN'));
     text(node('lobby-count'), [...state.players.values()].filter((player) => player.status !== 'spectator').length);
     text(node('lobby-clock'), seconds);
     lobby.hidden = state.phase !== 'LOBBY';
     countdown.hidden = state.phase !== 'COUNTDOWN' && !(active && time < battleFlashUntil);
-    text(node('countdown-number'), state.phase === 'COUNTDOWN' && seconds > 0 ? seconds : 'CHIẾN!');
+    text(node('countdown-number'), state.phase === 'COUNTDOWN' && seconds > 0 ? seconds : state.mode === 'raid' ? 'HỢP SỨC!' : 'CHIẾN!');
     battle.hidden = !active;
     result.hidden = state.phase !== 'RESULT';
     const value = energySnapshot ?? state.energy;
@@ -230,18 +307,32 @@ export function createHud({ root, bus, state, config, serverUrl, fetchTop, fetch
     }
     notice.hidden = !currentPopup;
     eventLabel.hidden = !active || time >= eventUntil;
+    if (active && state.mode === 'raid') {
+      eventLabel.hidden = false;
+      text(eventLabel, 'HỢP SỨC DIỆT BOSS · KHÓA SÁT THƯƠNG ĐỒNG ĐỘI');
+    }
     bounty.hidden = !active || time >= bannerUntil;
+    node('revive-banner').hidden = !active || time >= reviveUntil;
     const shrinkAt = Number(zoneSnapshot?.shrinkAtMs);
     zoneLabel.hidden = !active || !Number.isFinite(shrinkAt) || shrinkAt - time > ui.zoneWarningLeadMs || time >= shrinkAt + ui.zoneWarningDurationMs;
     if (!zoneLabel.hidden) text(zoneLabel, shrinkAt > time ? `Bo thu hẹp sau ${Math.ceil((shrinkAt - time) / 1000)}s` : `Bo đang thu hẹp · R${Math.round(zoneSnapshot.nextRadius)}`);
     const boss = state.boss ?? bossSnapshot;
+    node('footer-battle-stats').hidden = !active;
     bossPanel.hidden = !active || !boss || boss.hp <= 0;
-    if (!bossPanel.hidden) { bossMeter.max = Math.max(1, boss.maxHp); bossMeter.value = Math.max(0, Math.min(boss.maxHp, boss.hp)); text(node('boss-hp'), `${Math.ceil(boss.hp)}/${Math.ceil(boss.maxHp)}`); }
+    if (!bossPanel.hidden) {
+      bossMeter.max = Math.max(1, boss.maxHp); bossMeter.value = Math.max(0, Math.min(boss.maxHp, boss.hp));
+      text(node('boss-hp'), `${Math.ceil(boss.hp)}/${Math.ceil(boss.maxHp)}`);
+      const definition = config.bosses[boss.type];
+      text(node('boss-name'), definition?.name ?? 'BOSS');
+      text(node('boss-skill'), definition ? `${definition.skill.name}${boss.casting ? ' · ĐANG THI TRIỂN!' : ''}` : '');
+      node('boss-mana').max = boss.maxMana ?? 100;
+      node('boss-mana').value = boss.mana ?? 0;
+    }
     if (time >= refreshAt) {
       refreshAt = time + ui.refreshMs;
       const livingFeed = feedRows.filter((row) => row.until > time);
       rows(feed, livingFeed, (value) => { const row = doc.createElement('li'); row.className = `feed-${value.type}`; row.textContent = value.message; row.title = value.message; return row; });
-      rows(damageTop, [...state.players.values()].filter((player) => player.status !== 'spectator').sort((a, b) => b.damageDealt - a.damageDealt).slice(0, config.ui.leaderboardRows).map((player) => ({ name: player.name, damage: Math.round(player.damageDealt), kills: player.kills })), (row, index) => scoreRow(row, index));
+      rows(damageTop, [...state.players.values()].filter((player) => player.status !== 'spectator').sort((a, b) => b.damageDealt - a.damageDealt).slice(0, config.ui.leaderboardRows).map((player) => ({ name: player.name, avatar: player.avatar, classId: player.classId, damage: Math.round(player.damageDealt), kills: player.kills })), (row, index) => scoreRow(row, index));
       rows(avatarLane, recent, (player) => { const row = doc.createElement('li'); row.appendChild(avatar(player)); const label = doc.createElement('span'); label.textContent = player.name; row.appendChild(label); return row; });
     }
     if (state.phase === 'RESULT' && time >= nextDailyAt) void loadDaily();

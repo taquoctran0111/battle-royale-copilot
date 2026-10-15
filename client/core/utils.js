@@ -18,20 +18,21 @@ export const distXY = (x1, y1, x2, y2) => Math.hypot(x1 - x2, y1 - y2);
 export const areAllied = (player, other) => Boolean(player.allianceId &&
   (player.allianceId === other.id || other.allianceId === player.id || player.allianceId === other.allianceId));
 
-export function getEffectiveStats(player, config, nowMs, { attackBoost = false, dodging = false } = {}) {
+export function getEffectiveStats(player, config, nowMs, { dodging = false } = {}) {
   const buffs = player.buffs.filter((buff) => buff.until > nowMs);
   const attackBonus = buffs.filter((buff) => buff.type === 'weapon' || buff.type === 'rage')
     .reduce((total, buff) => total + Math.max(0, buff.value - 1), 0) +
     clamp(player.weaponLevel, 0, config.combat.maxWeaponLevel) * config.combat.weaponLevelAtkBonus +
-    (attackBoost ? config.combat.attackBoostMult - 1 : 0) + (player.allianceId ? config.alliance.buff.atkMult - 1 : 0);
+    (player.allianceId ? config.alliance.buff.atkMult - 1 : 0);
   const speedMult = buffs.filter((buff) => buff.type === 'speed').reduce((total, buff) => total * buff.value, 1) *
     (dodging ? config.combat.dodge.speedMult : 1) * (player.allianceId ? config.alliance.buff.speedMult : 1);
   return {
     atk: player.atk * (1 + clamp(attackBonus, 0, config.gifts.buffCaps.attackBonus)),
     def: player.def * (player.allianceId ? config.alliance.buff.defMult : 1),
-    speed: player.speed * clamp(speedMult, 1, config.gifts.buffCaps.speedMult),
+    speed: player.speed * clamp(speedMult, 1, config.gifts.buffCaps.speedMult) *
+      (player.bossSlowUntil > nowMs / 1000 ? player.bossSlowMult : 1),
     range: player.range,
-    attackInterval: player.attackInterval / (attackBoost ? config.combat.attackBoostSpeedMult : 1),
+    attackInterval: player.attackInterval,
   };
 }
 

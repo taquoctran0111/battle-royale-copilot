@@ -31,7 +31,7 @@ const config = {
 
   // ---- Vòng đời ván ----
   phases: {
-    durationSec: { LOBBY: 45, COUNTDOWN: 5, BATTLE: 150, FINAL: 45, RESULT: 10 },
+    durationSec: { LOBBY: 45, COUNTDOWN: 5, BATTLE: 240, FINAL: 60, RESULT: 10 },
     finalThresholdAlive: 5,           // còn <= 5 người sống -> vào FINAL
   },
 
@@ -40,15 +40,31 @@ const config = {
     botFillTo: 20,                    // bù bot cho đủ số người
     maxPlayers: 40,
   },
+  spawn: { minDistance: 110, attempts: 80 },
 
   // ---- Class nhân vật ----
   classes: {
-    swordsman: { id: 'swordsman', name: 'Kiếm sĩ',  color: '#ff7043', hp: 120, atk: 18, def: 8,  speed: 130, range: 60,  attackInterval: 800 },
-    archer:    { id: 'archer',    name: 'Cung thủ', color: '#66bb6a', hp: 90,  atk: 14, def: 4,  speed: 145, range: 320, attackInterval: 1000 },
-    mage:      { id: 'mage',      name: 'Pháp sư',  color: '#ab47bc', hp: 80,  atk: 22, def: 3,  speed: 120, range: 260, attackInterval: 1400 },
-    tank:      { id: 'tank',      name: 'Tank',     color: '#42a5f5', hp: 200, atk: 21, def: 18, speed: 100, range: 55,  attackInterval: 1000 },
+    swordsman: { id: 'swordsman', name: 'Kiếm sĩ',  color: '#ff7043', hp: 240, atk: 18, def: 8,  speed: 130, range: 60,  attackInterval: 800 },
+    archer:    { id: 'archer',    name: 'Cung thủ', color: '#66bb6a', hp: 180,  atk: 14, def: 4,  speed: 145, range: 320, attackInterval: 1000 },
+    mage:      { id: 'mage',      name: 'Pháp sư',  color: '#ab47bc', hp: 160,  atk: 22, def: 3,  speed: 120, range: 260, attackInterval: 1400 },
+    tank:      { id: 'tank',      name: 'Tank',     color: '#42a5f5', hp: 400, atk: 21, def: 18, speed: 100, range: 55,  attackInterval: 1000 },
   },
   classOrder: ['swordsman', 'archer', 'mage', 'tank'],   // thứ tự random/gán class
+  bosses: {
+    minorOrder: ['fire', 'ice', 'forest', 'dark'],
+    raidEvery: 3, raidDurationSec: 240,
+    reward: { hpMult: 1.25, atkMult: 1.2 },
+    fire: { name: 'Boss Lửa', color: '#ff873c', hpMult: 1, atkMult: 1, speedMult: 1, fillSec: 10,
+      skill: { name: 'Địa ngục dung nham', radius: 210, damage: 45, warningSec: 1.3 } },
+    ice: { name: 'Boss Băng', color: '#63dcff', hpMult: 1.1, atkMult: .9, speedMult: .85, fillSec: 12,
+      skill: { name: 'Băng chấn', radius: 250, damage: 40, slowMult: .55, slowSec: 3, warningSec: 1.5 } },
+    forest: { name: 'Boss Rừng', color: '#9aef51', hpMult: 1.15, atkMult: .85, speedMult: .9, fillSec: 13,
+      skill: { name: 'Cội nguồn sinh mệnh', radius: 190, damage: 30, healPercent: .06, warningSec: 1.5 } },
+    dark: { name: 'Boss Hắc Ám', color: '#c080ff', hpMult: .95, atkMult: 1.15, speedMult: 1.1, fillSec: 11,
+      skill: { name: 'Hố đen', radius: 180, damage: 50, targeted: true, pull: 70, warningSec: 1.6 } },
+    fusion: { name: 'Boss Hợp Thể', color: '#ffd36b', hp: 6500, hpPerPlayer: 200, atk: 42, speed: 85,
+      fillSec: 8, skill: { name: 'Tứ nguyên hủy diệt', radius: 285, damage: 65, slowMult: .65, slowSec: 2, healPercent: .03, pull: 70, warningSec: 1.8 } },
+  },
 
   // ---- Chiến đấu ----
   combat: {
@@ -56,11 +72,8 @@ const config = {
     critMult: 1.5,
     armorCauses: ['attack', 'boss', 'betray'], // môi trường gây sát thương trực tiếp
     minDamage: 1,
-    attackBoostMult: 1.6,             // lệnh "đánh": tăng sát thương/tốc đánh tạm thời
-    attackBoostSpeedMult: 1.6,
-    attackBoostDurationMs: 3000,
     dodge: { durationMs: 700, speedMult: 1.5, damageReduction: 0.8 },
-    cooldownMs: { attack: 4000, dodge: 6000, ally: 8000, betray: 10000 },  // theo từng lệnh
+    cooldownMs: { dodge: 6000, ally: 8000, betray: 10000 },  // theo từng lệnh
     maxWeaponLevel: 5,
     weaponLevelAtkBonus: 0.12,        // +12% atk mỗi cấp vũ khí
     reviveInvulnMs: 2000,
@@ -72,18 +85,26 @@ const config = {
     rangedClasses: ['archer', 'mage'], retreatRangeRatio: 0.55,
     separationPadding: 6, separationStrength: 0.8,
     zoneInset: 30, betrayPriorityDurationMs: 2000,
+    edgeInset: 110, fleeHpRatio: 0.3,
+  },
+  skills: {
+    enabled: true, maxMana: 100, fillSec: 15,
+    swordsman: { name: 'Lốc kiếm', range: 145, radius: 145, damageMult: 1.4 },
+    archer: { name: 'Liên tiễn', range: 340, radius: 0, damageMult: 0.65, shots: 3 },
+    mage: { name: 'Bộc phá', range: 300, radius: 125, damageMult: 1.6 },
+    tank: { name: 'Hộ thể', range: 200, radius: 90, shield: 20, durationMs: 4500, healPercent: 0.04 },
   },
 
   // ---- Vùng thu hẹp (mốc tính từ lúc BATTLE bắt đầu, gồm cả giai đoạn FINAL) ----
   zone: {
     initialRadius: 900,
     stages: [
-      { atSec: 30,  radius: 700, shrinkSec: 10, dps: 3 },
-      { atSec: 60,  radius: 520, shrinkSec: 10, dps: 5 },
-      { atSec: 90,  radius: 360, shrinkSec: 10, dps: 8 },
-      { atSec: 120, radius: 240, shrinkSec: 10, dps: 12 },
-      { atSec: 150, radius: 140, shrinkSec: 8,  dps: 16 },
-      { atSec: 175, radius: 60,  shrinkSec: 8,  dps: 22 },
+      { atSec: 45,  radius: 700, shrinkSec: 15, dps: 3 },
+      { atSec: 90,  radius: 520, shrinkSec: 15, dps: 5 },
+      { atSec: 140, radius: 360, shrinkSec: 15, dps: 8 },
+      { atSec: 190, radius: 240, shrinkSec: 15, dps: 12 },
+      { atSec: 240, radius: 140, shrinkSec: 12, dps: 16 },
+      { atSec: 275, radius: 60,  shrinkSec: 12, dps: 22 },
     ],
     baseDps: 2,                       // sát thương/giây ngoài vùng trước mốc đầu tiên
     damageTickMs: 1000,
@@ -176,7 +197,8 @@ const config = {
     damageParticleCount: 2, killParticleCount: 12, giftParticleCount: 10, trapParticleCount: 8, particleDrag: 0.96,
     ultimateParticleCount: 24,
     effectPopupLifeMs: 1400, effectWaveLifeMs: 1000, effectBeamLifeMs: 1200,
-    effectPopupRise: 55, effectPopupFontSize: 22, damageFontSize: 26, critFontSize: 40,
+    effectPopupRise: 65, effectPopupFontSize: 22, damageFontSize: 34, critFontSize: 46,
+    hitFlashMs: 220, hpTrailMs: 800, manaBarHeight: 5, manaBarGap: 4,
     effectRingRadius: 90, effectBeamHeight: 180, effectHeartSize: 26, effectTextWidth: 240,
     avatarCacheMax: 80, avatarLoadTimeoutMs: 5000, avatarResolution: 2,
     avatarInitialFontSize: 24, classIconSize: 18, classIconOffset: 36, classIconOffsetY: 23, nameMaxWidth: 130,
@@ -189,26 +211,27 @@ const config = {
     allyLineWidth: 1.5, rageLineWidth: 3, bountyLineWidth: 4, bountyHaloGap: 12,
     renderColors: {
       backgroundTop: '#10171c', backgroundBottom: '#182127', grid: 'rgba(180,210,210,0.08)',
-      outside: 'rgba(210,45,55,0.2)', zone: '#d8f2d0', text: '#f0f4ee', fallback: '#dce8e2',
+      outside: 'rgba(47,12,58,0.35)', zone: '#38cfff', text: '#f0f4ee', fallback: '#dce8e2',
       shield: '#8ce5dc', rage: '#f36b67', ally: 'rgba(131,220,190,0.65)',
       hpTrack: '#432e31', hp: '#7bc77c', boss: '#c84b46', bossHp: '#e87864',
       bomb: '#ef5d47', spike: '#dfb64f', damage: '#ff806b', crit: '#ffd166',
       revive: '#a9f2c3', supply: '#f0be63', grave: '#9fa8aa',
     },
-    gridSize: 90, gridLineWidth: 1, zoneLineWidth: 5, zoneDash: [18, 12],
-    playerRadius: 22, shieldLineWidth: 4, shieldGap: 6, nameFontSize: 18, nameOffset: 34,
-    hpBarWidth: 48, hpBarHeight: 6, hpBarOffset: 13, dropSize: 18, trapRadius: 14,
-    bossRadius: 42, bossBarWidth: 90, bossBarHeight: 8, bossBarOffset: 55,
+    gridSize: 90, gridLineWidth: 1, zoneLineWidth: 5, zoneDash: [],
+    playerRadius: 22, shieldLineWidth: 4, shieldGap: 6, nameFontSize: 18, nameOffset: 67,
+    hpBarWidth: 76, hpBarHeight: 7, hpBarOffset: -59, dropSize: 18, trapRadius: 14,
+    bossRadius: 95, bossBarWidth: 140, bossBarHeight: 8, bossBarOffset: 115,
+    bossSwingDurationMs: 500,
     noticeDurationMs: 4500, eventLabelDurationMs: 5000,
     hud: {
       designWidth: 1080, designHeight: 1920,
-      safeArea: { top: 0.06, right: 0.14, bottom: 0.15, left: 0.06 },
+      safeArea: { top: 0.02, right: 0.02, bottom: 0.04, left: 0.02 },
       feedRows: 5, feedTtlMs: 9000, popupQueueMax: 8, popupDurationMs: 3000,
       popupNameChars: 20, popupGiftChars: 20,
       refreshMs: 200, recentAvatars: 12, bannerDurationMs: 4000,
       battleFlashMs: 750, zoneWarningLeadMs: 10000, zoneWarningDurationMs: 5000,
       dailyRefreshMs: 2000, dailyTimeoutMs: 4000, showConnection: true,
-      commandIcons: { join: '\u2795', attack: '\u2694', dodge: '\u27B6', ally: '\u2665', betray: '\u26A1', rescue: '\u271A' },
+      commandIcons: { join: '\u2795', dodge: '\u27B6', ally: '\u2665', betray: '\u26A1', rescue: '\u271A' },
       giftIcons: ['\u271A', '\u25C7', '\u25A3', '\u2726'],
       giftLabels: ['Hồi máu + tốc độ', 'Khiên + vũ khí', 'Hàng tiếp tế', 'Hồi sinh / chiêu cuối'],
     },
@@ -226,6 +249,14 @@ const config = {
   audio: {
     volume: 0.08, minimumVolume: 0.001, noteGain: 0.35,
     maxVoices: 10, eventMinIntervalMs: 80, noteSpacingMs: 65,
+    music: {
+      enabled: true, gain: 0.16, maxVoices: 4, lookAheadSec: 0.12,
+      bpm: { LOBBY: 84, COUNTDOWN: 100, BATTLE: 116, FINAL: 136, RESULT: 112 },
+      melody: [64, 67, 71, 74, 71, 67, 62, 67, 60, 64, 67, 72, 67, 64, 62, 59],
+      bass: [40, 40, 36, 38],
+      victoryMelody: [72, 76, 79, 84, 79, 76, 77, 81, 79, 76, 74, 79, 76, 72, 74, 72],
+      victoryBass: [48, 53, 55, 48],
+    },
     sounds: {
       hit: { notes: [150], durationMs: 70, waveform: 'triangle' },
       kill: { notes: [220, 150], durationMs: 180, waveform: 'sawtooth' },
@@ -235,13 +266,13 @@ const config = {
       countdown: { notes: [520], durationMs: 110, waveform: 'sine' },
       battle: { notes: [520, 780], durationMs: 160, waveform: 'triangle' },
       win: { notes: [440, 554, 659, 880], durationMs: 240, waveform: 'sine' },
+      skill: { notes: [740, 988], durationMs: 140, waveform: 'triangle' },
     },
   },
 
   // ---- Từ khóa lệnh (so khớp đã bỏ dấu + không phân biệt hoa thường) ----
   commands: {
     join:   ['join', 'tham gia', 'vao'],
-    attack: ['đánh', 'tấn công', 'attack'],
     dodge:  ['né', 'chạy'],
     ally:   ['hợp tác'],
     betray: ['phản bội'],
@@ -250,7 +281,7 @@ const config = {
   input: {
     tokenCapacity: 30,
     tokenRefillPerSec: 10,
-    commandCooldownMs: { join: 0, attack: 4000, dodge: 6000, ally: 8000, betray: 10000, giftTarget: 2000 },
+    commandCooldownMs: { join: 0, dodge: 6000, ally: 8000, betray: 10000, giftTarget: 2000 },
   },
 };
 

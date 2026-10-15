@@ -65,6 +65,7 @@ export function createMovementSystem({ bus, state, config }) {
       let bestScore = Infinity;
       const betrayed = betrayedTargets.get(player.id);
       for (const candidate of alive) {
+        if (state.mode === 'raid') break;
         if (candidate.id === player.id || candidate.status !== 'alive') continue;
         if (!config.alliance.friendlyFire && areAllied(player, candidate) && candidate.id !== betrayed?.id) continue;
         const position = positions.get(candidate.id);
@@ -83,11 +84,17 @@ export function createMovementSystem({ bus, state, config }) {
       let dx = 0;
       let dy = 0;
       const outsideZone = distXY(origin.x, origin.y, state.zone.cx, state.zone.cy) > Math.max(0, state.zone.radius - config.movement.zoneInset);
-      const drop = state.drops.filter((item) => distXY(origin.x, origin.y, item.x, item.y) <= config.movement.dropPriorityRadius)
+      const drop = state.drops.filter((item) => (state.mode !== 'raid' || player.hp < player.maxHp * .5) && distXY(origin.x, origin.y, item.x, item.y) <= config.movement.dropPriorityRadius)
         .sort((first, second) => distXY(origin.x, origin.y, first.x, first.y) - distXY(origin.x, origin.y, second.x, second.y))[0];
 
       // Zone safety takes precedence over dodging, supplies and pursuit.
-      if (outsideZone) {
+      const bossCast = state.boss?.casting;
+      const bossSkill = config.bosses[state.boss?.type]?.skill;
+      if (bossCast && bossSkill && distXY(origin.x, origin.y, bossCast.x, bossCast.y) <= bossSkill.radius + 30) {
+        dx = origin.x - bossCast.x;
+        dy = origin.y - bossCast.y;
+        if (!dx && !dy) { dx = Math.cos(player.facing); dy = Math.sin(player.facing); }
+      } else if (outsideZone) {
         dx = state.zone.cx - origin.x;
         dy = state.zone.cy - origin.y;
       } else if (dodging && dodgeTarget) {
@@ -99,15 +106,29 @@ export function createMovementSystem({ bus, state, config }) {
         dy = drop.y - origin.y;
       } else if (targetPosition) {
         const distance = distXY(origin.x, origin.y, targetPosition.x, targetPosition.y);
-        if (distance > player.range * config.movement.arriveDistance) {
+        const weak = player.hp / player.maxHp < config.movement.fleeHpRatio;
+        if (weak && distance < Math.max(160, player.range)) {
+          dx = origin.x - targetPosition.x;
+          dy = origin.y - targetPosition.y;
+        } else if (distance > player.range * config.movement.arriveDistance) {
           dx = targetPosition.x - origin.x;
           dy = targetPosition.y - origin.y;
         } else if (config.movement.rangedClasses.includes(player.classId) && distance < player.range * config.movement.retreatRangeRatio) {
           dx = origin.x - targetPosition.x;
           dy = origin.y - targetPosition.y;
+        } else {
+          const turn = Array.from(player.id).reduce((sum, ch) => sum + ch.codePointAt(0), 0) % 2 ? 1 : -1;
+          dx = -(targetPosition.y - origin.y) * turn;
+          dy = (targetPosition.x - origin.x) * turn;
         }
       }
 
+      if (!dx && !dy) {
+        const angle = state.time * .45 + Array.from(player.id).reduce((sum, ch) => sum + ch.codePointAt(0), 0);
+        dx = state.zone.cx + Math.cos(angle) * Math.min(180, state.zone.radius * .45) - origin.x;
+        dy = state.zone.cy + Math.sin(angle) * Math.min(180, state.zone.radius * .45) - origin.y;
+        if (Math.hypot(dx, dy) < 1) { dx = Math.cos(angle + Math.PI / 2); dy = Math.sin(angle + Math.PI / 2); }
+      }
       const length = Math.hypot(dx, dy);
       let directionX = length ? dx / length : 0;
       let directionY = length ? dy / length : 0;
@@ -122,15 +143,39 @@ export function createMovementSystem({ bus, state, config }) {
         directionX += (distance ? (origin.x - position.x) / distance : Math.cos(angle)) * strength;
         directionY += (distance ? (origin.y - position.y) / distance : Math.sin(angle)) * strength;
       }
+      // Replace outward steering near the map/zone edge, rather than clamping a runner against it.
+      const inset = Math.min(config.movement.edgeInset, state.arena.w * .2, state.arena.h * .2);
+      if (origin.x < inset) directionX = Math.max(.65, directionX);
+      if (origin.x > state.arena.w - inset) directionX = Math.min(-.65, directionX);
+      if (origin.y < inset) directionY = Math.max(.65, directionY);
+      if (origin.y > state.arena.h - inset) directionY = Math.min(-.65, directionY);
+      const zx = origin.x - state.zone.cx, zy = origin.y - state.zone.cy;
+      const zoneDistance = Math.hypot(zx, zy);
+      const comfortRadius = Math.max(0, state.zone.radius - config.movement.zoneInset * 2);
+      if (zoneDistance > comfortRadius && zoneDistance > 0) {
+        const outward = (directionX * zx + directionY * zy) / zoneDistance;
+        if (outward > -.35) {
+          directionX -= zx / zoneDistance * (outward + .65);
+          directionY -= zy / zoneDistance * (outward + .65);
+        }
+      }
+      if (Math.hypot(directionX, directionY) < .1) {
+        directionX = Math.cos(player.facing + .7);
+        directionY = Math.sin(player.facing + .7);
+      }
       const directionLength = Math.max(1, Math.hypot(directionX, directionY));
       const { speed } = getEffectiveStats(player, config, now, { dodging });
       const smoothing = config.movement.velocitySmoothing;
       player.vx += (directionX / directionLength * speed - player.vx) * smoothing;
       player.vy += (directionY / directionLength * speed - player.vy) * smoothing;
+      if (Math.hypot(player.vx, player.vy) < speed * .08) {
+        player.vx = directionX / directionLength * speed * .25;
+        player.vy = directionY / directionLength * speed * .25;
+      }
       const margin = Math.min(config.ui.playerRadius, state.arena.w / 2, state.arena.h / 2);
       player.x = clamp(origin.x + player.vx * dt, margin, state.arena.w - margin);
       player.y = clamp(origin.y + player.vy * dt, margin, state.arena.h - margin);
-      if (dx || dy) player.facing = Math.atan2(dy, dx);
+      player.facing = Math.atan2(player.vy, player.vx);
       for (const item of state.drops.slice()) {
         if (distXY(player.x, player.y, item.x, item.y) <= config.events.dropRadius) collectDrop(player, item);
       }

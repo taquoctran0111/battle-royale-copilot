@@ -13,6 +13,8 @@ Chạy `npm test` với Node.js 18 trở lên. Bộ `node:test` trong `tests/gam
 - [x] Effects từng event mẫu có particle/popup, hết hạn đúng, không vượt maxParticles và không sửa GameState.
 - [x] HUD phase LOBBY/COUNTDOWN/BATTLE/FINAL/RESULT, popup ưu tiên có cap, feed 5 dòng, boss/energy/zone, top damage và API bảng ngày, không sửa state.
 - [x] WebAudio đủ hit/kill/gift/boss/ultimate/countdown/win, mute/volume, xử lý autoplay bị chặn, cap voice khi spam và dispose.
+- [x] Nhạc nền Web Audio: lặp theo phase, giới hạn voice, nút nhạc/loa/volume, autoplay, tạm dừng tab ẩn và dispose đầy đủ (`tests/audio-music.test.js`).
+- [x] Boss xuất hiện không tạo thêm ID người chơi; quà T4 hồi sinh người cũ ở điểm trống, kể cả khi boss đã có trước; animation đòn boss chỉ đọc state và hết hạn (`tests/battle-presentation.test.js`). HUD không còn minimap, có banner hồi sinh riêng.
 - [x] Leaderboard day/week reset theo UTC, all-time và khóa chống trùng giữ qua ngày và reload JSON.
 - [x] Shield từng lớp hết hạn độc lập sau khi tiêu hao; rage/speed/weapon tính qua chỉ số hiệu dụng có cap, không đổi chỉ số gốc.
 - [x] Mỗi người hồi sinh tối đa một lần/ván và tổng không vượt maxRevivesPerRound; không hồi sinh được chuyển ultimate, quà thiếu/spectator phát gift:ignored.
@@ -23,15 +25,27 @@ Chạy `npm test` với Node.js 18 trở lên. Bộ `node:test` trong `tests/gam
 - [x] Chat, đủ 4 tier quà, chọn mục tiêu cứu, ultimate toàn sân, hồi sinh, liên minh và phản bội.
 - [x] Bounty sau 3 mạng, boss spawn/damage/defeat, energy, bão, drop và trap.
 - [x] Movement chỉ chạy BATTLE/FINAL: bounty, đồng minh, phản bội, giữ tầm cung/pháp sư, né x1.5 đúng hạn, separation, biên arena, vùng an toàn và ưu tiên nhặt drop.
-- [x] Combat: shield hấp thụ chính xác, HP không âm, damage lồng nhau không phát chết trùng, buff cộng dồn, boost sát thương/tốc đánh, crit sau DEF, hồi sinh và bất tử ngắn.
+- [x] `tests/class-skills.test.js`: mana đầy sau 15 giây chiến đấu, giữ khi chưa có địch, dùng một lần rồi reset, không hồi ngoài trận/chết, reset khi hồi sinh/ván mới. Bốn skill kiểm tra damage/hồi HP/khiên chính xác, ally, boss, phạm vi, hết buff, overkill và không chết trùng.
+- [x] Movement mới: né sát cả bốn mép phải quay vào; chạy 900 tick mỗi tình huống, không có tick đứng yên (<5 px/s), dưới 30 tick trong dải sát mép 50 px; chuyển từ giao tranh sang tuần tra vẫn di chuyển.
+- [x] Hiệu ứng skill, số HP âm viền đậm, aura khiên, thanh mana và HP trail chỉ đọc state, có giới hạn particle/hết hạn. HUD hiển thị top 3, class chiến thắng và trường hợp hòa; nhạc RESULT dùng giai điệu riêng khi có winner và trở lại nhạc thường nếu hòa.
+- [x] Combat: shield hấp thụ chính xác, HP không âm, damage lồng nhau không phát chết trùng, buff cộng dồn, tự đánh theo interval class (không còn boost qua lệnh ĐÁNH), crit sau DEF, hồi sinh và bất tử ngắn.
 - [x] Boss đánh từ CombatSystem đúng một lần mỗi interval, chọn mục tiêu gần nhất; ghi damage thực tế, không tính overkill, boss:defeated đúng một lần.
 - [x] Zone nội suy đúng mốc kể cả nhảy thời gian, nghỉ giữa mốc, cảnh báo theo giai đoạn, damage mỗi giây, storm chỉ tăng damage ngoài bo và reset ván.
 - [x] Event: energy LOBBY trì hoãn kích hoạt, drop:request/nhặt/hết hạn, drop tự động, bẫy điểm nóng, bombRain/meteor và chặn LOBBY/RESULT.
 - [x] Boss cần ít nhất 4 người sống, chỉ một lần/ván, thưởng heal/rage cho top damage không trùng; ultimate bỏ qua bản thân/đồng minh và có hiệu ứng.
+- [x] `tests/boss-raids.test.js`: chọn được đủ 4 boss nhỏ và không sinh lần hai trong ván thường; Hợp Thể xuất hiện đầu BATTLE ở ván 3/6, không sinh thời tiết/bẫy/thu bo trong raid. Toàn đội chọn boss, không sát thương đồng đội qua attack/skill/betray/ultimate kể cả bật friendly fire; ultimate chuyển sang boss.
+- [x] Raid kết thúc đúng người last-hit dù người khác gây nhiều damage; chỉ phát kết quả một lần. Thưởng +25% HP/+20% ATK giữ đúng một ván, đổi class không mất/stack buff, bot được giữ để hưởng thưởng rồi xóa đúng hạn. Một người vẫn đánh tiếp; hết giờ hoặc chết hết không có winner/buff.
+- [x] Cả 5 boss: mana đầy đúng nhịp, cảnh báo không gây damage sớm, đánh đúng vùng khi impact; hồi máu, kéo và làm chậm/hết hạn đúng thông số. Render boss, mana, vòng báo, hiệu ứng skill và huy hiệu DIỆT BOSS chỉ đọc state, particle có cap và hết hạn. HUD phân biệt thành công/thất bại raid, tên boss/skill và mana.
+- [x] Boss replacement PNG: đủ 5 ảnh RGBA, dùng nguyên ảnh/alpha, không đi qua crop/xóa backdrop cũ. Atlas hiệu ứng có 8 frame, cache riêng attack/skill cho đủ 5 boss, chọn frame đúng và dispose xóa cache; không rasterize lại mỗi frame.
 - [x] Alliance đồng thuận hai chiều trong 15s, tên không phân biệt dấu, phase/cooldown, lời mời quá hạn, bot chấp nhận/đề nghị và buff khi ghép.
 - [x] Phản bội sớm bị từ chối; thứ tự betrayed -> damage -> broken, kể cả đòn gây chết; chết/RESULT làm vỡ liên minh và hai đồng minh cuối FINAL phải quyết đấu.
 - [x] Bounty thuộc người có streak cao nhất, hòa giữ người hiện tại; claim thưởng heal/buff một lần, revive mở lại lượt tính streak, LOBBY reset.
 - [x] Payload mock cho các loại `live:*` bắt buộc đúng kiểu dữ liệu.
+- [x] `tests/mock-actions.test.js`: cả mock server/local tự phát bình luận hợp tác hai chiều tạo liên minh thật, né và phản bội sau thời gian chờ; tên server không trùng, không sinh lệnh ĐÁNH, payload đúng schema, disconnect/dispose dọn hết timer.
+- [x] Mock CỨU đi kèm quà ngay sau comment, một lần mỗi chu kỳ, luân phiên T1/T4. Kiểm tra hồi HP đúng người, tiêu thụ rescue target và hồi sinh đúng mục tiêu đã chọn thay vì người chết đầu tiên; cả server/local đều phát lệnh cứu qua input router.
+- [x] `JOIN [class]` nhận tên class tiếng Việt có/không dấu và ID, không phân biệt hoa/thường; từ chối class lạ. JOIN thường giữ random cân bằng, không reroll người đã tham gia. Người tự join có thể đổi class trong LOBBY/COUNTDOWN, cập nhật đúng chỉ số mà giữ vị trí/giftValue; BATTLE/FINAL/RESULT khóa class và không hồi HP khi gửi lại lệnh. Người vào muộn giữ class đã chọn trong hàng chờ. Mock server/local phát JOIN thường và chọn đủ bốn class, kiểm tra class thực tế và schema. HUD có 6 lệnh, ví dụ JOIN trên từng thẻ class; kiểm tra 390/530/1080px không tràn/chồng footer.
+- [x] HUD không tạo cụm skill-guide và không hiển thị lệnh ĐÁNH; parser bỏ cả alias ATTACK/TẤN CÔNG. Mana và skill tự động vẫn giữ nguyên.
+- [x] Chỉ số còn sống/ván, năng lượng, quà và HP boss có đúng một node mỗi ID, nằm trong footer dưới hai nhóm lệnh/quà; vẫn cập nhật ở BATTLE/FINAL và ẩn ngoài trận. Kiểm tra trình duyệt: có/không có boss không tràn ngang, feed nằm trên footer, các nhóm không chồng lấp.
 - [x] 50 viewer join và 1.000 comment; số người chơi không vượt cấu hình.
 - [x] Leaderboard cộng điểm và bỏ qua request ghi trùng.
 - [x] Chế độ WebSocket local phát status đúng schema và dừng timer khi dispose.
@@ -45,6 +59,8 @@ Chạy `npm test` với Node.js 18 trở lên. Bộ `node:test` trong `tests/gam
 - Payload lệch được phát hiện và sửa: local `live:status` từng chứa cờ nội bộ `force`; cờ này nay bị loại trước khi emit. Schema live events và event literals hiện đều qua test.
 
 Test stress chạy trong Node không đo FPS hoặc khả năng render Canvas; cần xác nhận phần đó trên máy chạy OBS/LIVE Studio.
+
+E2E lấy thời hạn chờ từ tổng duration các phase thay vì hằng 250/1200 giây: các trận có skill phòng thủ có thể đi đủ 300 giây, và bài 5 vòng liên tiếp phải đủ ngân sách cho cả 5 vòng.
 
 Chạy riêng nghiệm thu RoundManager và factory:
 
@@ -64,7 +80,7 @@ GiftEffectSystem bỏ qua tier1–3 cho người thiếu/spectator/dead; tier4 v
 node --test --test-name-pattern="^movement:|^combat:" tests/game-smoke.test.js
 ```
 
-Benchmark chạy 20 bot cân bằng lớp, fixed tick 30 Hz, seed 1/17/42, có RoundManager/M7/Zone/Movement/Combat và thưởng bounty, không có quà hay sự kiện ngẫu nhiên. Thời gian tính từ BATTLE đến RESULT: **83,57 / 81,50 / 112,70 giây**. Mỗi trận có một người thắng, 19 sự kiện player:killed cho 19 người khác nhau; mọi HP luôn trong [0, maxHp]. Đây là ba kịch bản tái lập, không phải cam kết mọi seed/quà/sự kiện đều kết thúc trong cùng khoảng.
+Benchmark chạy 20 bot cân bằng lớp, fixed tick 30 Hz, seed 1/17/42, có RoundManager/GiftEffectSystem (xử lý buff skill)/M7/Zone/Movement/Combat và thưởng bounty, không có quà hay sự kiện ngẫu nhiên. Sau thay đổi movement và skill mana, cả ba seed chạm hạn **300,00 giây**, lần lượt còn **3 / 5 / 4** người sống (17 / 15 / 16 người bị loại). Tank có kỹ năng phòng thủ nên trận có thể đi tới hết thời gian; hệ thống chọn người thắng theo HP/kills/damage như luật cũ, không tạo kill giả cho người còn sống. Test yêu cầu trận dài hơn 120 giây và không vượt hạn 300 giây (sai số một tick), đúng 20 hàng ranking, mỗi nạn nhân chỉ chết một lần, HP trong [0, maxHp]; nếu còn nhiều người thì phải đúng deadline và winner có HP cao nhất. Đây là ba kịch bản tái lập, không phải cam kết mọi seed/quà/sự kiện đều có thời lượng giống nhau.
 
 Sát thương attack/boss/betray là `max(minDamage, atk * (1 + tổng bonus) - def)`, sau đó nhân crit cho attack. Bonus từ vũ khí, rage, boost và liên minh cộng dồn. Zone/trap/bomb/ultimate bỏ qua DEF; shield vẫn hấp thụ trước HP. Chỉ damage HP thực tế và damage boss thực tế được cộng damageDealt, không tính shield/overkill. Tank atk được cân bằng lại thành 21 để tránh đấu Tank chỉ gây sát thương tối thiểu với công thức trừ DEF.
 
@@ -80,7 +96,9 @@ node --test --test-name-pattern="^zone:|^events:" tests/game-smoke.test.js
 
 Quà tier3 emit event nội bộ **drop:request { x?, y?, tier }**. EventSystem tạo drop:spawned, sinh thêm theo events.dropSpawnSec và quản lý hạn events.dropLifetimeMs; drop:collected gỡ drop và hạn tồn tại. Drop/bẫy/boss/ultimate không tạo hoặc gây damage ở LOBBY/RESULT; quà tier3 trong các phase này không được thả hàng. Energy vẫn tích lũy nhưng chỉ kích hoạt trong BATTLE/FINAL, và reset khi bắt đầu ván mới.
 
-BombRain/meteor tạo các trap kind bomb với damage/radius theo sự kiện; bom nổ khi có người vào bán kính hoặc hết fuse. Bẫy thường ưu tiên điểm đông chiến binh. Boss chỉ một lần/ván, cần đạt cả events.bossMinAlive (mặc định 4) và minAliveToSpawn của cấu hình boss; top damager còn sống nhận heal + rage qua EventBus. Ultimate được EventSystem chuyển thành damage:request cho mọi kẻ địch toàn sân, bỏ qua mình và đồng minh; Effects nghe ultimate:fire để vẽ particles mà không thêm loại event ngoài catalog.
+BombRain/meteor tạo các trap kind bomb với damage/radius theo sự kiện. Mưa bom nổ khi có người vào bán kính hoặc hết fuse; thiên thạch có visual riêng, rơi so le trong thời gian sự kiện và chỉ nổ khi hết fuse (chạm đất). Vòng cảnh báo dùng đúng bán kính sát thương, vệt rơi bám thời gian logic. Bão có mưa/sét hết hạn theo durationSec và vẫn chỉ gây thêm sát thương ngoài bo. Bẫy thường ưu tiên điểm đông chiến binh. Boss chỉ một lần/ván, cần đạt cả events.bossMinAlive (mặc định 4) và minAliveToSpawn của cấu hình boss; top damager còn sống nhận heal + rage qua EventBus. Ultimate được EventSystem chuyển thành damage:request cho mọi kẻ địch toàn sân, bỏ qua mình và đồng minh; Effects nghe ultimate:fire để vẽ particles mà không thêm loại event ngoài catalog.
+
+`tests/battle-presentation.test.js` kiểm tra spawn tái lập theo seed cho map dọc/ngang 40 người: trong map/bo, khoảng cách tối thiểu 110 px ở các seed kiểm tra, prevX/prevY đồng bộ và velocity reset. Test hiệu ứng kiểm tra bão hết hạn, vòng thiên thạch khớp bán kính, nổ có particles, dọn khi RESULT/dispose và không sửa state. Kiểm tra thị giác: bật sự kiện bão/meteor, quan sát mưa/sét, vòng cảnh báo, vệt lửa và sóng nổ.
 
 ## Alliance Và Bounty
 

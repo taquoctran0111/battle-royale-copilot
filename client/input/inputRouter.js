@@ -24,11 +24,11 @@ export function createInputRouter({ bus, state, config }) {
     tokens -= 1;
     return true;
   };
-  const emitJoin = (user) => {
+  const emitJoin = (user, classId) => {
     if (!user?.userId) return;
     const id = String(user.userId);
-    if (state.players.has(id)) return;
-    bus.emit('cmd:join', { player: { id, name: user.nickname || user.uniqueId || id, avatar: user.avatarUrl || '' } });
+    if (state.players.has(id) && !classId) return;
+    bus.emit('cmd:join', { player: { id, name: user.nickname || user.uniqueId || id, avatar: user.avatarUrl || '', ...(classId ? { classId } : {}) } });
   };
   const addEnergy = (amount) => {
     if (Number.isFinite(amount) && amount > 0) bus.emit('energy:add', { amount });
@@ -44,7 +44,7 @@ export function createInputRouter({ bus, state, config }) {
     const playerId = String(event.userId);
     let player = state.players.get(playerId);
     if (parsed.cmd === 'join') {
-      emitJoin(event);
+      emitJoin(event, parsed.arg);
       return;
     }
     if (!player) return;
@@ -61,8 +61,7 @@ export function createInputRouter({ bus, state, config }) {
       if (!target) return;
       state.giftTargets.set(playerId, { targetId: target.id, expiresAt: nowMs() + config.gifts.giftTargetTtlMs });
       bus.emit('cmd:giftTarget', { playerId, targetName: parsed.arg });
-    } else if (parsed.cmd === 'attack') bus.emit('cmd:attack', { playerId });
-    else if (parsed.cmd === 'dodge') bus.emit('cmd:dodge', { playerId });
+    } else if (parsed.cmd === 'dodge') bus.emit('cmd:dodge', { playerId });
     else if (parsed.cmd === 'ally') bus.emit('cmd:ally', { playerId, targetName: parsed.arg });
     else if (parsed.cmd === 'betray') bus.emit('cmd:betray', { playerId });
 
