@@ -1,0 +1,452 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f2f5f1">
+  <title>WebSocket Monitor | Đấu Trường Sinh Tồn</title>
+  <style>
+    :root {
+      color-scheme: light;
+      font-family: Bahnschrift, "Segoe UI", sans-serif;
+      color: #172521;
+      background: #f2f5f1;
+      font-synthesis: none;
+      --ink: #172521;
+      --muted: #64736d;
+      --line: #d8e1d9;
+      --paper: #fff;
+      --green: #167653;
+      --red: #c54136;
+      --mono: "Cascadia Code", Consolas, monospace;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; min-width: 320px; background: linear-gradient(135deg, #f4f7f3, #edf3ef 55%, #f7f4ed); }
+    button, input, select { font: inherit; }
+    button { color: inherit; }
+    .shell { width: min(1500px, 100%); margin: 0 auto; padding: 28px clamp(16px, 3vw, 42px) 42px; }
+    .masthead { display: flex; justify-content: space-between; align-items: flex-end; gap: 24px; padding-bottom: 22px; border-bottom: 1px solid var(--line); }
+    .eyebrow { margin: 0 0 8px; color: var(--green); font: 700 11px/1.2 var(--mono); text-transform: uppercase; }
+    h1 { margin: 0; font-size: 30px; line-height: 1.1; font-weight: 750; }
+    .subhead { margin: 9px 0 0; color: var(--muted); font-size: 14px; }
+    .mast-meta { text-align: right; color: var(--muted); font: 12px/1.7 var(--mono); overflow-wrap: anywhere; }
+    .status-band { display: grid; grid-template-columns: minmax(180px, .8fr) minmax(180px, .9fr) minmax(220px, 1.2fr) minmax(220px, 1.1fr); gap: 1px; margin: 22px 0 0; background: var(--line); border: 1px solid var(--line); }
+    .status-cell { min-width: 0; padding: 15px 18px; background: var(--paper); }
+    .status-label { display: block; margin-bottom: 7px; color: var(--muted); font: 700 10px/1.2 var(--mono); text-transform: uppercase; }
+    .status-value { display: flex; min-height: 22px; align-items: center; gap: 9px; font-size: 14px; font-weight: 700; overflow-wrap: anywhere; }
+    .dot { width: 9px; height: 9px; flex: 0 0 9px; border-radius: 50%; background: #9aa7a0; box-shadow: 0 0 0 3px #9aa7a01c; }
+    .dot.connected { background: #1e9a61; box-shadow: 0 0 0 3px #1e9a6124; }
+    .dot.error { background: var(--red); box-shadow: 0 0 0 3px #c5413620; }
+    .mono { font-family: var(--mono); font-size: 12px; font-weight: 500; }
+    .stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); margin: 18px 0 24px; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+    .stat { padding: 13px 17px 14px 0; }
+    .stat + .stat { padding-left: 18px; border-left: 1px solid var(--line); }
+    .stat strong { display: block; font: 700 24px/1.1 var(--mono); font-variant-numeric: tabular-nums; }
+    .stat span { display: block; margin-top: 6px; color: var(--muted); font-size: 12px; }
+    .toolbar { display: flex; align-items: center; gap: 9px; flex-wrap: wrap; padding: 13px; background: #e7eee8; border: 1px solid #d6e0d8; border-bottom: 0; }
+    .toolbar label { color: var(--muted); font-size: 12px; font-weight: 700; }
+    .toolbar select, .toolbar input { height: 36px; min-width: 150px; padding: 0 10px; border: 1px solid #cbd7ce; border-radius: 3px; background: #fff; color: var(--ink); }
+    .toolbar input { flex: 1 1 200px; }
+    .toolbar button { min-height: 36px; padding: 0 12px; border: 1px solid #cbd7ce; border-radius: 3px; background: #fff; cursor: pointer; font-size: 12px; font-weight: 700; }
+    .toolbar button:hover { border-color: var(--green); }
+    .toolbar .primary { background: var(--green); border-color: var(--green); color: #fff; }
+    .toolbar .primary:hover { background: #105e41; }
+    .capture-note { margin-left: auto; color: var(--muted); font: 11px/1.4 var(--mono); }
+    .workspace { display: grid; grid-template-columns: minmax(0, 1fr) 360px; min-height: 520px; border: 1px solid var(--line); background: var(--paper); }
+    .feed { min-width: 0; border-right: 1px solid var(--line); }
+    .feed-heading, .detail-heading { display: flex; min-height: 47px; align-items: center; justify-content: space-between; gap: 12px; padding: 0 15px; border-bottom: 1px solid var(--line); }
+    .feed-heading h2, .detail-heading h2 { margin: 0; font-size: 13px; }
+    .feed-heading span { color: var(--muted); font: 11px var(--mono); }
+    .table-wrap { overflow: auto; max-height: 650px; }
+    table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+    th { position: sticky; top: 0; z-index: 1; padding: 9px 12px; background: #f6f8f6; color: var(--muted); text-align: left; font: 700 10px var(--mono); text-transform: uppercase; }
+    th:first-child { width: 100px; }
+    th:nth-child(2) { width: 150px; }
+    td { padding: 10px 12px; border-top: 1px solid #edf1ed; vertical-align: top; font-size: 12px; }
+    tbody tr { cursor: pointer; }
+    tbody tr:hover { background: #f5faf6; }
+    tbody tr.selected { background: #eaf5ed; box-shadow: inset 3px 0 var(--green); }
+    .time { color: var(--muted); font: 10px/1.5 var(--mono); white-space: nowrap; }
+    .event-name { display: inline-block; max-width: 100%; padding: 4px 6px; overflow: hidden; border: 1px solid #d9e4dc; border-radius: 3px; background: #f5f8f5; color: #385349; font: 700 10px var(--mono); text-overflow: ellipsis; white-space: nowrap; }
+    .event-name[data-kind="chat"] { border-color: #b6d8c4; background: #e8f5ec; color: #176444; }
+    .event-name[data-kind="gift"] { border-color: #efd69f; background: #fff7e4; color: #875914; }
+    .event-name[data-kind="status"] { border-color: #c7d5e5; background: #eef4fa; color: #365b7c; }
+    .summary { display: block; overflow-wrap: anywhere; line-height: 1.45; }
+    .join-tag { display: inline-block; margin-left: 5px; padding: 2px 5px; border-radius: 2px; background: #d7f1df; color: #176444; font: 700 9px var(--mono); }
+    .empty { padding: 48px 18px; color: var(--muted); text-align: center; font-size: 13px; }
+    .detail { min-width: 0; }
+    .detail-content { padding: 15px; }
+    .detail-meta { margin: 0 0 12px; color: var(--muted); font: 11px/1.6 var(--mono); overflow-wrap: anywhere; }
+    pre { min-height: 100px; max-height: 570px; margin: 0; padding: 13px; overflow: auto; border: 1px solid #e0e7e1; border-radius: 3px; background: #f7f9f7; color: #263b32; font: 11px/1.55 var(--mono); white-space: pre-wrap; overflow-wrap: anywhere; }
+    .detail-empty { padding: 16px 0; color: var(--muted); font-size: 12px; line-height: 1.6; }
+    .footer-note { margin: 12px 0 0; color: var(--muted); font-size: 11px; line-height: 1.55; }
+    @media (max-width: 900px) {
+      .workspace { grid-template-columns: minmax(0, 1fr) 300px; }
+      .status-band { grid-template-columns: 1fr 1fr; }
+      .status-cell:last-child { grid-column: 1 / -1; }
+      .capture-note { flex-basis: 100%; margin-left: 0; }
+    }
+    @media (max-width: 680px) {
+      .shell { padding: 19px 12px 28px; }
+      .masthead { align-items: flex-start; flex-direction: column; gap: 10px; }
+      .mast-meta { text-align: left; }
+      h1 { font-size: 25px; }
+      .status-band { grid-template-columns: 1fr 1fr; }
+      .status-cell { padding: 12px; }
+      .stats { grid-template-columns: 1fr 1fr; }
+      .stat:nth-child(3) { padding-left: 0; border-left: 0; border-top: 1px solid var(--line); }
+      .stat:nth-child(4) { border-top: 1px solid var(--line); }
+      .workspace { grid-template-columns: minmax(0, 1fr); }
+      .feed { border-right: 0; }
+      .detail { border-top: 1px solid var(--line); }
+      th:first-child { width: 76px; }
+      th:nth-child(2) { width: 117px; }
+      td, th { padding-right: 8px; padding-left: 8px; }
+      .toolbar label { flex-basis: 100%; }
+      .toolbar select { flex: 1 1 130px; }
+      .toolbar input { flex-basis: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <header class="masthead">
+      <div>
+        <p class="eyebrow">Đấu Trường Sinh Tồn / Live diagnostics</p>
+        <h1>WebSocket Monitor</h1>
+        <p class="subhead">Theo dõi event server broadcast sau khi nhận từ TikTok LIVE.</p>
+      </div>
+      <div class="mast-meta">
+        <div>SOCKET <span id="socket-url">đang khởi tạo</span></div>
+        <div>CLIENT <span id="client-time">--:--:--</span></div>
+      </div>
+    </header>
+
+    <section class="status-band" aria-label="Trạng thái kết nối">
+      <div class="status-cell">
+        <span class="status-label">WebSocket</span>
+        <span class="status-value"><i class="dot" id="socket-dot"></i><span id="socket-state">Đang kết nối</span></span>
+      </div>
+      <div class="status-cell">
+        <span class="status-label">TikTok LIVE</span>
+        <span class="status-value"><i class="dot" id="live-dot"></i><span id="live-state">Chờ trạng thái từ server</span></span>
+      </div>
+      <div class="status-cell">
+        <span class="status-label">Room ID</span>
+        <span class="status-value mono" id="room-id">Chưa nhận</span>
+      </div>
+      <div class="status-cell">
+        <span class="status-label">Chat vào adapter</span>
+        <span class="status-value" id="chat-diagnostic">Đang kiểm tra</span>
+      </div>
+    </section>
+
+    <section class="stats" aria-label="Thống kê event">
+      <div class="stat"><strong id="count-total">0</strong><span>Frame nhận được</span></div>
+      <div class="stat"><strong id="count-chat">0</strong><span>Comment live:chat</span></div>
+      <div class="stat"><strong id="count-join">0</strong><span>Comment JOIN hợp lệ</span></div>
+      <div class="stat"><strong id="count-types">0</strong><span>Loại event</span></div>
+    </section>
+
+    <section class="toolbar" aria-label="Điều khiển event feed">
+      <label for="event-filter">Lọc event</label>
+      <select id="event-filter" aria-label="Lọc theo loại event">
+        <option value="all">Tất cả loại</option>
+      </select>
+      <input id="search" type="search" placeholder="Tìm trong payload…" aria-label="Tìm event">
+      <button class="primary" id="pause-button" type="button">Tạm dừng feed</button>
+      <button id="clear-button" type="button">Xóa log</button>
+      <button id="export-button" type="button">Xuất JSON</button>
+      <button id="reconnect-button" type="button">Kết nối lại</button>
+      <span class="capture-note" id="capture-note">Đang ghi event</span>
+    </section>
+
+    <section class="workspace">
+      <div class="feed">
+        <div class="feed-heading">
+          <h2>Frame nhận từ server</h2>
+          <span id="visible-count">0 hiển thị</span>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Thời gian</th><th>Event</th><th>Payload tóm tắt</th></tr></thead>
+            <tbody id="event-rows"></tbody>
+          </table>
+          <div class="empty" id="empty-state">Đang chờ event từ server…</div>
+        </div>
+      </div>
+      <aside class="detail">
+        <div class="detail-heading"><h2>Chi tiết frame</h2><span class="mono" id="detail-type">--</span></div>
+        <div class="detail-content">
+          <p class="detail-meta" id="detail-meta">Chọn một frame để xem payload JSON đầy đủ.</p>
+          <pre id="detail-json" class="detail-empty">Chưa chọn event</pre>
+          <p class="footer-note">Trang này chỉ quan sát dữ liệu server gửi tới WebSocket client; không gửi lệnh ngược lên server.</p>
+        </div>
+      </aside>
+    </section>
+  </main>
+
+  <script type="module">
+    import config from './core/config.js';
+    import { parse } from './input/commandParser.js';
+
+    const elements = Object.fromEntries([
+      'socket-url', 'client-time', 'socket-dot', 'socket-state', 'live-dot', 'live-state', 'room-id',
+      'count-total', 'count-chat', 'count-join', 'count-types', 'event-filter', 'search', 'pause-button',
+      'clear-button', 'export-button', 'reconnect-button', 'capture-note', 'visible-count', 'event-rows',
+      'empty-state', 'detail-type', 'detail-meta', 'detail-json', 'chat-diagnostic',
+    ].map((id) => [id, document.getElementById(id)]));
+
+    const params = new URLSearchParams(location.search);
+    const initialServer = params.get('server');
+    const events = [];
+    const eventTypes = new Set();
+    let socket;
+    let reconnectTimer;
+    let reconnectDelay = 1000;
+    let generation = 0;
+    let paused = false;
+    let pending = 0;
+    let total = 0;
+    let chats = 0;
+    let joins = 0;
+    let selectedId = null;
+    const maxEvents = 500;
+
+    const formatTime = (date) => new Intl.DateTimeFormat('vi-VN', {
+      hour: '2-digit', minute: '2-digit', second: '2-digit', fractionalSecondDigits: 3,
+    }).format(date);
+    const short = (value, length = 150) => {
+      const text = String(value ?? '');
+      return text.length > length ? `${text.slice(0, length - 1)}…` : text;
+    };
+    const kindFor = (type) => type === 'live:chat' ? 'chat' : type === 'live:gift' ? 'gift' : type === 'live:status' ? 'status' : '';
+
+    function setSocketState(state, message) {
+      elements['socket-state'].textContent = message;
+      elements['socket-dot'].className = `dot ${state}`;
+    }
+
+    function updateStats() {
+      elements['count-total'].textContent = total.toLocaleString('vi-VN');
+      elements['count-chat'].textContent = chats.toLocaleString('vi-VN');
+      elements['count-join'].textContent = joins.toLocaleString('vi-VN');
+      elements['count-types'].textContent = eventTypes.size.toLocaleString('vi-VN');
+    }
+
+    function summaryFor(frame) {
+      const payload = frame.payload ?? {};
+      if (frame.type === 'live:chat') return `${payload.nickname || payload.uniqueId || payload.userId || 'Viewer'}: “${short(payload.text, 110)}”`;
+      if (frame.type === 'live:join') return `${payload.nickname || payload.uniqueId || payload.userId || 'Viewer'} vào phòng`;
+      if (frame.type === 'live:gift') return `${payload.nickname || payload.userId || 'Viewer'} · ${payload.giftName || 'Quà'} ×${payload.count || 1} (${payload.diamonds || 0} 💎)`;
+      if (frame.type === 'live:like') return `${payload.nickname || payload.userId || 'Viewer'} · +${payload.likeCount || 0} like`;
+      if (frame.type === 'live:status') return payload.connected ? `Đã kết nối · room ${payload.roomId || 'unknown'}` : `Mất kết nối · ${payload.error || 'không rõ nguyên nhân'}`;
+      return short(JSON.stringify(payload), 160);
+    }
+
+    function visibleEvents() {
+      const type = elements['event-filter'].value;
+      const query = elements.search.value.trim().toLowerCase();
+      return events.filter((entry) => {
+        if (type !== 'all' && entry.frame.type !== type) return false;
+        return !query || JSON.stringify(entry.frame).toLowerCase().includes(query);
+      }).slice(-150).reverse();
+    }
+
+    function showDetails(entry) {
+      selectedId = entry.id;
+      elements['detail-type'].textContent = entry.frame.type || 'raw';
+      elements['detail-meta'].textContent = `${formatTime(entry.receivedAt)} · ${entry.bytes} bytes`;
+      elements['detail-json'].className = '';
+      elements['detail-json'].textContent = JSON.stringify(entry.frame, null, 2);
+      renderFeed();
+    }
+
+    function renderFeed() {
+      const visible = visibleEvents();
+      elements['event-rows'].replaceChildren();
+      elements['visible-count'].textContent = `${visible.length} hiển thị${pending ? ` · ${pending} mới khi tạm dừng` : ''}`;
+      elements['empty-state'].hidden = visible.length > 0;
+      elements['empty-state'].textContent = events.length ? 'Không có event khớp bộ lọc.' : 'Đang chờ event từ server…';
+
+      for (const entry of visible) {
+        const row = document.createElement('tr');
+        row.classList.toggle('selected', entry.id === selectedId);
+        const timeCell = document.createElement('td');
+        timeCell.className = 'time';
+        timeCell.textContent = formatTime(entry.receivedAt);
+        const typeCell = document.createElement('td');
+        const typeLabel = document.createElement('span');
+        typeLabel.className = 'event-name';
+        typeLabel.dataset.kind = kindFor(entry.frame.type);
+        typeLabel.textContent = entry.frame.type || 'raw';
+        typeCell.append(typeLabel);
+        const summaryCell = document.createElement('td');
+        const summary = document.createElement('span');
+        summary.className = 'summary';
+        summary.textContent = summaryFor(entry.frame);
+        summaryCell.append(summary);
+        if (entry.joinCommand) {
+          const badge = document.createElement('span');
+          badge.className = 'join-tag';
+          badge.textContent = 'JOIN hợp lệ';
+          summaryCell.append(badge);
+        }
+        row.append(timeCell, typeCell, summaryCell);
+        row.addEventListener('click', () => showDetails(entry));
+        elements['event-rows'].append(row);
+      }
+    }
+
+    function addEvent(frame, raw) {
+      const type = typeof frame?.type === 'string' ? frame.type : 'raw';
+      const normalizedFrame = type === 'raw' ? { type, payload: raw } : frame;
+      const joinCommand = type === 'live:chat' && parse(frame.payload?.text, config)?.cmd === 'join';
+      const entry = {
+        id: `${Date.now()}-${Math.random()}`,
+        receivedAt: new Date(),
+        bytes: new Blob([raw]).size,
+        frame: normalizedFrame,
+        joinCommand,
+      };
+      events.push(entry);
+      if (events.length > maxEvents) events.shift();
+      total += 1;
+      if (type === 'live:chat') chats += 1;
+      if (joinCommand) joins += 1;
+      if (!eventTypes.has(type)) {
+        eventTypes.add(type);
+        const option = document.createElement('option');
+        option.value = type;
+        option.textContent = type;
+        elements['event-filter'].append(option);
+      }
+      updateStats();
+
+      if (type === 'live:status') {
+        const payload = normalizedFrame.payload ?? {};
+        const liveConnected = payload.connected === true;
+        elements['live-state'].textContent = liveConnected ? 'Đã kết nối LIVE' : `Ngắt kết nối${payload.error ? ` · ${payload.error}` : ''}`;
+        elements['live-dot'].className = `dot ${liveConnected ? 'connected' : 'error'}`;
+        elements['room-id'].textContent = payload.roomId || 'Không có room ID';
+      }
+      if (paused) pending += 1;
+      else renderFeed();
+    }
+
+    function socketAddress() {
+      const base = new URL(initialServer || location.origin, location.href);
+      base.protocol = base.protocol === 'https:' ? 'wss:' : 'ws:';
+      base.pathname = '/ws';
+      base.search = '';
+      base.hash = '';
+      return base;
+    }
+
+    function connect() {
+      clearTimeout(reconnectTimer);
+      const previous = socket;
+      const currentGeneration = ++generation;
+      socket = null;
+      previous?.close();
+      try {
+        const address = socketAddress();
+        elements['socket-url'].textContent = address.href;
+        setSocketState('', 'Đang kết nối');
+        const nextSocket = new WebSocket(address);
+        socket = nextSocket;
+        nextSocket.addEventListener('open', () => {
+          if (currentGeneration !== generation) return;
+          reconnectDelay = 1000;
+          setSocketState('connected', 'Đã kết nối');
+        });
+        nextSocket.addEventListener('message', (event) => {
+          if (currentGeneration !== generation) return;
+          try {
+            addEvent(JSON.parse(event.data), event.data);
+          } catch {
+            addEvent({ type: 'raw', payload: event.data }, event.data);
+          }
+        });
+        nextSocket.addEventListener('error', () => {
+          if (currentGeneration === generation) setSocketState('error', 'Lỗi WebSocket');
+        });
+        nextSocket.addEventListener('close', () => {
+          if (currentGeneration !== generation) return;
+          setSocketState('error', 'Mất kết nối · đang thử lại');
+          reconnectTimer = setTimeout(connect, reconnectDelay);
+          reconnectDelay = Math.min(reconnectDelay * 1.7, 15000);
+        });
+      } catch (error) {
+        setSocketState('error', 'URL WebSocket không hợp lệ');
+        elements['socket-url'].textContent = error.message;
+      }
+    }
+
+    async function refreshChatDiagnostic() {
+      try {
+        const response = await fetch('/api/diagnostics/tiktok-chat', { cache: 'no-store' });
+        if (!response.ok) throw new Error('Endpoint chưa sẵn sàng');
+        const diagnostic = await response.json();
+        if (!diagnostic.callbacks) {
+          elements['chat-diagnostic'].textContent = '0 callback · connector chưa phát chat';
+          elements['chat-diagnostic'].title = 'Chưa nhận callback chat thô từ TikTok connector.';
+          return;
+        }
+        const last = diagnostic.last ?? {};
+        const summary = last.accepted
+          ? `${diagnostic.callbacks} nhận · ${diagnostic.forwarded} đã chuyển tiếp`
+          : `${diagnostic.callbacks} nhận · ${diagnostic.dropped} bị bỏ (${last.reason || 'không rõ'})`;
+        elements['chat-diagnostic'].textContent = summary;
+        elements['chat-diagnostic'].title = `commentField=${last.commentField}; commentLength=${last.commentLength}; hasUserId=${last.hasUserId}; hasUniqueId=${last.hasUniqueId}; topLevelKeys=${(last.topLevelKeys ?? []).join(',')}; userKeys=${(last.userKeys ?? []).join(',')}`;
+      } catch {
+        elements['chat-diagnostic'].textContent = 'Chẩn đoán chưa có · cần restart server';
+        elements['chat-diagnostic'].title = 'Khởi động lại server đang chạy để bật endpoint chẩn đoán.';
+      }
+    }
+
+    elements['pause-button'].addEventListener('click', () => {
+      paused = !paused;
+      elements['pause-button'].textContent = paused ? 'Tiếp tục feed' : 'Tạm dừng feed';
+      elements['capture-note'].textContent = paused ? 'Đang giữ feed · vẫn ghi event' : 'Đang ghi event';
+      if (!paused) {
+        pending = 0;
+        renderFeed();
+      }
+    });
+    elements['clear-button'].addEventListener('click', () => {
+      events.length = 0;
+      eventTypes.clear();
+      total = 0;
+      chats = 0;
+      joins = 0;
+      pending = 0;
+      selectedId = null;
+      elements['event-filter'].replaceChildren(new Option('Tất cả loại', 'all'));
+      elements['detail-type'].textContent = '--';
+      elements['detail-meta'].textContent = 'Chọn một frame để xem payload JSON đầy đủ.';
+      elements['detail-json'].className = 'detail-empty';
+      elements['detail-json'].textContent = 'Chưa chọn event';
+      updateStats();
+      renderFeed();
+    });
+    elements['export-button'].addEventListener('click', () => {
+      const contents = JSON.stringify({ exportedAt: new Date().toISOString(), socket: elements['socket-url'].textContent, events: events.map(({ receivedAt, bytes, frame }) => ({ receivedAt: receivedAt.toISOString(), bytes, ...frame })) }, null, 2);
+      const url = URL.createObjectURL(new Blob([contents], { type: 'application/json' }));
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `websocket-capture-${new Date().toISOString().replaceAll(':', '-')}.json`;
+      link.click();
+      URL.revokeObjectURL(url);
+    });
+    elements['reconnect-button'].addEventListener('click', connect);
+    elements['event-filter'].addEventListener('change', renderFeed);
+    elements.search.addEventListener('input', renderFeed);
+    elements['client-time'].textContent = formatTime(new Date());
+    setInterval(() => { elements['client-time'].textContent = formatTime(new Date()); }, 1000);
+    refreshChatDiagnostic();
+    setInterval(refreshChatDiagnostic, 1500);
+    connect();
+  </script>
+</body>
+</html>

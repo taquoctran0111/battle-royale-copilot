@@ -71,7 +71,7 @@ function createGame(overrides = {}) {
 }
 
 function addMockViewer(game, id, nickname) {
-  game.mock.send('live:join', { userId: id, uniqueId: id, nickname });
+  game.bus.emit('live:chat', { userId: id, uniqueId: id, nickname, text: 'JOIN' });
   return game.state.players.get(id);
 }
 
@@ -668,6 +668,7 @@ test('effects: every sample event produces bounded effects without mutating Game
 
 test('gift effects: lobby accounting, capped count heals, weapons, bounty shield and nearby supplies', () => {
   const game = createGame();
+  game.bus.emit('live:chat', { userId: 'gift-sender', nickname: 'Gift Sender', text: 'JOIN' });
   game.mock.send('live:gift', { userId: 'gift-sender', nickname: 'Gift Sender', diamonds: 50, count: 1, giftName: 'Corgi' });
   const sender = game.state.players.get('gift-sender');
   assert.equal(sender.giftValue, 50);
@@ -1789,7 +1790,7 @@ test('inputRouter: cooldown riêng và token bucket chặn comment flood', () =>
   floodBus.clear();
 });
 
-test('inputRouter: quà tự join, áp dụng rescue target và cộng energy đúng schema', () => {
+test('inputRouter: chỉ chat JOIN đăng ký người chơi; quà vẫn áp dụng rescue và cộng energy', () => {
   const game = createGame();
   const target = addMockViewer(game, 'gift-target', 'Ngọc Lan');
   const effects = [];
@@ -1800,6 +1801,9 @@ test('inputRouter: quà tự join, áp dụng rescue target và cộng energy đ
   game.bus.on('cmd:join', (event) => joins.push(event));
   const gift = { userId: 'new-gifter', uniqueId: 'new-gifter', nickname: 'Tặng Quà', avatarUrl: '', giftId: 9, giftName: 'Rose', diamonds: 5, count: 1 };
   game.bus.emit('live:join', gift);
+  assert.equal(game.state.players.has(gift.userId), false, 'vào phòng không tự đăng ký người chơi');
+  game.bus.emit('live:chat', { ...gift, text: 'JOIN' });
+  assert.equal(game.state.players.has(gift.userId), true, 'comment JOIN đăng ký người chơi');
   game.bus.emit('live:chat', { ...gift, text: 'cứu @Ngọc Lan' });
   assert.equal(game.state.giftTargets.get(gift.userId)?.targetId, target.id);
   game.bus.emit('live:gift', gift);
@@ -1807,12 +1811,11 @@ test('inputRouter: quà tự join, áp dụng rescue target và cộng energy đ
   assert.deepEqual(effects[0], { fromId: gift.userId, toId: target.id, tier: 1, diamonds: 5, giftName: 'Rose', count: 1 });
   assert.deepEqual(energies[0], { amount: 0.5 });
   const spontaneousGift = { ...gift, userId: 'spontaneous-gifter', nickname: 'Tự Join' };
+  game.bus.emit('live:join', spontaneousGift);
   game.bus.emit('live:gift', spontaneousGift);
-  assert.ok(game.state.players.has(spontaneousGift.userId));
+  assert.equal(game.state.players.has(spontaneousGift.userId), false, 'tặng quà không tự đăng ký người chơi');
   assert.equal(effects[1].toId, spontaneousGift.userId);
-  assert.deepEqual(joins.find((event) => event.player.id === spontaneousGift.userId), {
-    player: { id: spontaneousGift.userId, name: spontaneousGift.nickname, avatar: '' },
-  });
+  assert.equal(joins.some((event) => event.player.id === spontaneousGift.userId), false);
   game.bus.emit('live:like', { userId: target.id, nickname: target.name, likeCount: 10, totalLikeCount: 10 });
   assert.deepEqual(energies[1], { amount: 0.5 });
   game.dispose();
@@ -1842,12 +1845,15 @@ test('event audit: TikTok mapper preserves real userId and emits normalized cata
   }
   const seen = [];
   const statuses = [];
-  const adapter = createTikTokAdapter({ username: 'test', ConnectionClass: FakeConnection, onEvent: (type, payload) => { assert.deepEqual(validateEventPayload(type, payload), []); seen.push({ type, payload }); }, onStatus: (payload) => { assert.deepEqual(validateEventPayload('live:status', payload), []); statuses.push(payload); } });
+  const chatDiagnostics = [];
+  const adapter = createTikTokAdapter({ username: 'test', ConnectionClass: FakeConnection, onEvent: (type, payload) => { assert.deepEqual(validateEventPayload(type, payload), []); seen.push({ type, payload }); }, onStatus: (payload) => { assert.deepEqual(validateEventPayload('live:status', payload), []); statuses.push(payload); }, onChatDiagnostic: (payload) => chatDiagnostics.push(payload) });
   await adapter.connect();
   const user = { userId: '12345', uniqueId: 'viewer', nickname: 'Viewer', profilePicture: { urls: ['https://example.test/avatar.png'] } };
   connection.emit('chat', { user, comment: 'JOIN' });
   connection.emit('gift', { user, giftId: 42, giftType: 1, repeatEnd: false, repeatCount: 2, diamondCount: 5, giftName: 'Rose' });
   assert.equal(seen.length, 1);
+  assert.equal(chatDiagnostics[0].accepted, true);
+  assert.equal(chatDiagnostics[0].commentField, 'comment');
   connection.emit('gift', { user, giftId: 42, giftType: 1, repeatEnd: true, repeatCount: 2, diamondCount: 5, giftName: 'Rose' });
   for (const type of ['like', 'member', 'follow', 'share']) connection.emit(type, { user, likeCount: 3, totalLikeCount: 7 });
   assert.equal(seen.length, 6);
@@ -1855,6 +1861,16 @@ test('event audit: TikTok mapper preserves real userId and emits normalized cata
   assert.equal(seen.find((event) => event.type === 'live:gift').payload.diamonds, 10);
   connection.emit('chat', { user: { uniqueId: 'not-a-user-id', nickname: 'Missing ID' }, comment: 'JOIN' });
   assert.equal(seen.length, 6);
+  assert.equal(chatDiagnostics.at(-1).accepted, false);
+  assert.equal(chatDiagnostics.at(-1).reason, 'missing_user_id');
+  connection.emit('chat', { user: { userId: '', idStr: '', id: 0, secUid: 'stable-secuid', displayId: 'raw-viewer', nickname: 'Raw Viewer' }, content: 'JOIN' });
+  const rawChat = seen.filter((event) => event.type === 'live:chat').at(-1);
+  assert.equal(rawChat.payload.userId, 'stable-secuid');
+  assert.equal(rawChat.payload.uniqueId, 'raw-viewer');
+  assert.equal(rawChat.payload.text, 'JOIN');
+  assert.equal(chatDiagnostics.at(-1).accepted, true);
+  assert.equal(chatDiagnostics.at(-1).commentField, 'content');
+  assert.equal(seen.length, 7);
   await adapter.disconnect();
   assert.equal(statuses.at(-1).connected, false);
 });
@@ -2306,7 +2322,7 @@ test('wsClient: tự kết nối lại sau khi socket bị ngắt', async () => 
 
 test('mock stress: 50 người vào và spam comment không vượt maxPlayers', () => {
   const game = createGame();
-  for (let index = 0; index < 50; index += 1) game.bus.emit('live:join', { userId: `u${index}`, nickname: `User ${index}` });
+  for (let index = 0; index < 50; index += 1) game.bus.emit('cmd:join', { player: { id: `u${index}`, name: `User ${index}`, avatar: '' } });
   for (let index = 0; index < 1000; index += 1) game.bus.emit('live:chat', { userId: `u${index % 50}`, nickname: `User ${index % 50}`, text: 'né' });
   assert.equal(game.state.players.size, game.cfg.lobby.maxPlayers);
   game.dispose();

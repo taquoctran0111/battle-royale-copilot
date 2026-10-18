@@ -155,11 +155,14 @@ test('join class: localized names, optional random class, lobby/countdown change
     chat(randoms[0].id, 'JOIN');
     assert.equal(randoms[0].classId, originalClass, 'duplicate JOIN does not reroll');
     bus.emit('live:join', { userId: 'auto', uniqueId: 'auto', nickname: 'Auto', avatarUrl: '' });
+    assert.equal(state.players.has('auto'), false, 'viewer entry alone does not join the game');
+    chat('auto', 'JOIN Tank');
     const auto = state.players.get('auto');
+    assert.equal(auto.classId, 'tank');
     auto.giftValue = 99;
     const position = { x: auto.x, y: auto.y };
-    chat('auto', 'JOIN Tank');
-    assert.equal(auto.classId, 'tank', 'auto-joined viewers can select a class');
+    chat('auto', 'JOIN swordsman');
+    assert.equal(auto.classId, 'swordsman', 'JOIN can select a class after registering');
     assert.equal(auto.giftValue, 99);
     assert.deepEqual({ x: auto.x, y: auto.y }, position);
     state.phase = 'COUNTDOWN';

@@ -73,7 +73,6 @@ export function createInputRouter({ bus, state, config }) {
     }
   }
 
-  listen('live:join', emitJoin);
   listen('round:phase', ({ phase } = {}) => {
     if (phase !== 'LOBBY') return;
     tokens = capacity;
@@ -84,7 +83,6 @@ export function createInputRouter({ bus, state, config }) {
   listen('live:gift', (event) => {
     const fromId = String(event?.userId ?? '');
     if (!fromId) return;
-    if (!state.players.has(fromId)) emitJoin(event);
     const diamonds = Number(event.diamonds) || 0;
     const giftTier = getGiftTier(config.gifts.tiers, diamonds);
     const target = state.giftTargets.get(fromId);

@@ -24,6 +24,7 @@ const HEARTBEAT_MS = 30000;
 const MAX_WS_BUFFER = 1_000_000; // bỏ qua client bị nghẽn (bytes)
 
 let useMock = String(process.env.USE_MOCK).toLowerCase() === 'true';
+const tiktokChatDiagnostics = { callbacks: 0, forwarded: 0, dropped: 0, last: null };
 if (!useMock && !USERNAME) {
   console.warn('[server] Thiếu TIKTOK_USERNAME -> tự chuyển sang MOCK.');
   useMock = true;
@@ -56,6 +57,8 @@ if (!hasIndex) app.get('/', (_req, res) => res.redirect('/test.html')); // chưa
 app.use(express.static(CLIENT_DIR));
 
 app.get('/health', (_req, res) => res.json({ ok: true, mock: useMock, clients: wss.clients.size }));
+
+app.get('/api/diagnostics/tiktok-chat', (_req, res) => res.json(tiktokChatDiagnostics));
 
 app.get('/api/leaderboard', async (req, res) => {
   try {
@@ -165,6 +168,12 @@ const adapter = useMock
       username: USERNAME,
       onEvent: handleEvent,
       onStatus: handleStatus,
+      onChatDiagnostic: (diagnostic) => {
+        tiktokChatDiagnostics.callbacks += 1;
+        if (diagnostic.accepted) tiktokChatDiagnostics.forwarded += 1;
+        else tiktokChatDiagnostics.dropped += 1;
+        tiktokChatDiagnostics.last = { ...diagnostic, receivedAt: new Date().toISOString() };
+      },
       signApiKey: process.env.TIKTOK_SIGN_API_KEY || undefined,
     });
 

@@ -15,6 +15,7 @@ const Connection =
   TTL.default?.WebcastPushConnection;
 
 const str = (v) => (v === undefined || v === null ? '' : String(v));
+const firstId = (...values) => values.map(str).find((value) => value.trim() && value !== '0') ?? '';
 const num = (v) => {
   const n = Number(v);
   return Number.isFinite(n) ? n : 0;
@@ -24,15 +25,15 @@ const errMsg = (e) => str(e?.message ?? e?.info ?? e) || 'unknown error';
 /** Đọc user từ data.user.* (v2) hoặc data.* (v1). Trả về null nếu thiếu id. */
 function readUser(data) {
   const u = data?.user ?? {};
-  const uniqueId = str(u.uniqueId ?? data?.uniqueId);
-  const userId = str(u.userId ?? data?.userId);
+  const uniqueId = firstId(u.uniqueId, u.displayId, data?.uniqueId, data?.displayId);
+  const userId = firstId(u.userId, u.idStr, u.id, data?.userId, data?.idStr, data?.id, u.secUid, data?.secUid);
   if (!userId) return null;
   return {
     userId,
     uniqueId,
-    nickname: str(u.nickname ?? data?.nickname ?? uniqueId),
+    nickname: firstId(u.nickname, data?.nickname, uniqueId),
     avatarUrl: str(
-      u.profilePicture?.urls?.[0] ?? u.profilePictureUrl ?? data?.profilePictureUrl ?? ''
+      u.profilePicture?.urls?.[0] ?? u.profilePictureUrl ?? u.avatarThumb?.urlList?.[0] ?? data?.profilePictureUrl ?? ''
     ),
   };
 }
@@ -42,7 +43,7 @@ function readUser(data) {
  *           onStatus:(payload:object)=>void, signApiKey?:string }} opts
  * @returns {{ connect:()=>Promise<void>, disconnect:()=>Promise<void> }}
  */
-export function createTikTokAdapter({ username, onEvent, onStatus, signApiKey, ConnectionClass = Connection }) {
+export function createTikTokAdapter({ username, onEvent, onStatus, onChatDiagnostic, signApiKey, ConnectionClass = Connection }) {
   let current = null; // kết nối hiện tại
   let stopped = true; // true khi người dùng chủ động ngắt
   let connecting = false;
@@ -65,11 +66,32 @@ export function createTikTokAdapter({ username, onEvent, onStatus, signApiKey, C
     }
   };
 
+  const diagnoseChat = (data, accepted) => {
+    const user = data?.user ?? {};
+    const comment = data?.comment ?? data?.text ?? data?.content;
+    const commentLength = str(comment).trim().length;
+    const hasUserId = Boolean(firstId(user.userId, user.idStr, user.id, data?.userId, data?.idStr, data?.id, user.secUid, data?.secUid));
+    try {
+      onChatDiagnostic?.({
+        accepted,
+        reason: accepted ? null : commentLength === 0 ? 'empty_comment' : !hasUserId ? 'missing_user_id' : 'unknown',
+        commentField: data?.comment !== undefined ? 'comment' : data?.text !== undefined ? 'text' : data?.content !== undefined ? 'content' : 'none',
+        commentLength,
+        hasUserId,
+        hasUniqueId: Boolean(firstId(user.uniqueId, user.displayId, data?.uniqueId, data?.displayId)),
+        topLevelKeys: Object.keys(data ?? {}),
+        userKeys: Object.keys(user),
+      });
+    } catch (e) {
+      console.error('[tiktok] chat diagnostic lỗi:', errMsg(e));
+    }
+  };
+
   // --- chuẩn hóa từng loại sự kiện (trả về payload hoặc null để bỏ qua) ---
   const mappers = {
     chat(data) {
       const user = readUser(data);
-      const text = str(data?.comment ?? data?.text).trim();
+      const text = str(data?.comment ?? data?.text ?? data?.content).trim();
       if (!user || !text) return null;
       return ['live:chat', { ...user, text }];
     },
@@ -147,6 +169,7 @@ export function createTikTokAdapter({ username, onEvent, onStatus, signApiKey, C
         name,
         guard((data) => {
           const out = map(data);
+          if (name === 'chat') diagnoseChat(data, Boolean(out));
           if (out) emit(out[0], out[1]);
         })
       );
